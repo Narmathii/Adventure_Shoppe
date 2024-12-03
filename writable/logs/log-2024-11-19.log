@@ -1,0 +1,62 @@
+ERROR - 2024-11-19 08:57:20 --> Error connecting to the database: ErrorException: mysqli::real_connect(): Error while reading greeting packet. PID=8092 in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:185
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'mysqli::real_co...', 'C:\\xampp\\htdocs...', 185, Array)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(185): mysqli->real_connect('localhost', 'root', '', 'adventure', 3306, '', 0)
+#2 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#3 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#4 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(16): CodeIgniter\Database\BaseConnection->query('SELECT * FROM `...')
+#5 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(38): App\Controllers\Home->headerlist()
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\Home->index()
+#7 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#8 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#10 {main}
+
+Next mysqli_sql_exception: MySQL server has gone away in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:185
+Stack trace:
+#0 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(185): mysqli->real_connect('localhost', 'root', '', 'adventure', 3306, '', 0)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#2 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#3 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(16): CodeIgniter\Database\BaseConnection->query('SELECT * FROM `...')
+#4 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(38): App\Controllers\Home->headerlist()
+#5 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\Home->index()
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#7 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#8 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#9 {main}
+
+Next CodeIgniter\Database\Exceptions\DatabaseException: MySQL server has gone away in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:229
+Stack trace:
+#0 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(392): CodeIgniter\Database\MySQLi\Connection->connect(false)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+#2 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(16): CodeIgniter\Database\BaseConnection->query('SELECT * FROM `...')
+#3 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\Home.php(38): App\Controllers\Home->headerlist()
+#4 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\Home->index()
+#5 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#8 {main}
+CRITICAL - 2024-11-19 08:57:20 --> CodeIgniter\Database\Exceptions\DatabaseException: Unable to connect to the database.
+Main connection [MySQLi]: MySQL server has gone away
+in SYSTEMPATH\Database\BaseConnection.php on line 428.
+ 1 SYSTEMPATH\Database\BaseConnection.php(575): CodeIgniter\Database\BaseConnection->initialize()
+ 2 APPPATH\Controllers\Home.php(16): CodeIgniter\Database\BaseConnection->query('SELECT * FROM `brand_master` WHERE  `flag` =1 ORDER BY brand_name ASC')
+ 3 APPPATH\Controllers\Home.php(38): App\Controllers\Home->headerlist()
+ 4 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\Home->index()
+ 5 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-11-19 12:00:38 --> ErrorException: A non-numeric value encountered
+in APPPATH\Controllers\admin\BrandMaster.php on line 116.
+ 1 APPPATH\Controllers\admin\BrandMaster.php(116): CodeIgniter\Debug\Exceptions->errorHandler(2, 'A non-numeric value encountered', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\BrandMaster.php', 116, [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\BrandMaster->updateBrandData()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\BrandMaster))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-11-19 12:00:46 --> ErrorException: A non-numeric value encountered
+in APPPATH\Controllers\admin\BrandMaster.php on line 116.
+ 1 APPPATH\Controllers\admin\BrandMaster.php(116): CodeIgniter\Debug\Exceptions->errorHandler(2, 'A non-numeric value encountered', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\BrandMaster.php', 116, [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\BrandMaster->updateBrandData()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\BrandMaster))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
