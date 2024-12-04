@@ -89,17 +89,14 @@ class TallyController extends ResourceController
                 'tbl_camping_products'
             ];
 
-            // for($i=0;$i < count($jsonData);$i++)
-            // {
-            //     print_r($jsonData[$i]['item_name'])
-            // }
-
             foreach ($jsonData as $item) {
 
                 if (isset($item['item_name']) && isset($item['quantity'])) {
                     $prodName = $item['item_name'];
                     $Tallystock = intval($item['quantity']);
+                    $updateProd = null; // Initialize variable
 
+                    // Search for product in all tables
                     foreach ($table_names as $table) {
                         $query = $db->query(
                             "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
@@ -107,92 +104,100 @@ class TallyController extends ResourceController
                         );
                         $result = $query->getRow();
 
-
-
-                        $productID = $result->prod_id;
-                        $tableName = $result->tbl_name;
-
-
+                        // Check if any result is found
                         if ($result && $result->count > 0) {
-                            $updateQuery = "UPDATE $table SET quantity = ? WHERE product_name = ?";
+                            $updateProd = $result;
+                            break; // Found the product, no need to continue loop
+                        }
+                    }
+
+                    // Process product if found in any table
+                    if ($updateProd) {
+                        $productID = $updateProd->prod_id;
+                        $tableName = $updateProd->tbl_name;
+
+                        if ($productID != '' && $tableName != '') {
+                            $updateQuery = "UPDATE $tableName SET quantity = ? WHERE product_name = ?";
                             $db->query($updateQuery, [$Tallystock, $prodName]);
-                        } else {
+                        }
+                    } else {
+                        // If not found, handle product name and size extraction
+                        $prodName = trim($prodName);
+                        $parts = preg_split('/[-\/_]/', $prodName);
 
-                            $pattern = '/^(.*)-([A-Z]+)-([0-9A-Z]+)$/';
-                            if (preg_match($pattern, $prodName, $matches)) {
-                                $TallyProductName = $matches[1];
-                                $Tallycolor = $matches[2];
-                                $Tallysize = $matches[3];
+                        if (count($parts) >= 2) {
+                            // Extract size and product name
+                            $Tallysize = $parts[count($parts) - 1];
+                            $TallyProductName = implode('-', array_slice($parts, 0, count($parts) - 1));
 
-
+                            foreach ($table_names as $table) {
                                 $query = $db->query(
                                     "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
                                     [$TallyProductName]
                                 );
-                                $getresult = $query->getRow();
+                                $result = $query->getRow();
 
-                                $TallyproductID = $getresult->prod_id;
-                                $tableName = $getresult->tbl_name;
-                                $MainQuantity = $getresult->quantity;
-
-                                $configquery = "SELECT * FROM `tbl_configuration` WHERE `tbl_name` = ? AND `prod_id` = ?";
-                                $getConfigData = $db->query($configquery, [$tableName, $TallyproductID])->getResultArray();
-
-                                if (count($getConfigData) > 0) {
-                                    $size = json_decode($getConfigData[0]['size']);
-                                    $color = json_decode($getConfigData[0]['colour']);
-                                    $stock = json_decode($getConfigData[0]['soldout_status']);
-
-
-                                    // getColorName 
-                                    $colorName = [];
-                                    foreach ($color as $colorID) {
-                                        $colorQry = "SELECT `color_name` FROM `tbl_color` WHERE `color_id` = ? AND `flag` = 1";
-                                        $getColor = $db->query($colorQry, [$colorID])->getRow();
-                                        $colorName[] = $getColor->color_name;
-                                    }
-
-                                    $newStock = $stock;
-
-
-                                    for ($i = 0; $i < count($colorName); $i++) {
-
-                                        if ($colorName[$i] == $Tallycolor && $size[$i] == $Tallysize) {
-                                            $oldConfigStock = $stock[$i];
-                                            $newStock[$i] = $Tallystock;
-                                        }
-                                    }
-
-
-                                    $EncodeStock = json_encode($newStock);
-
-                                    if ($EncodeStock != $stock) {
-
-                                        $query = "UPDATE tbl_configuration SET `soldout_status` = ? 
-                                                  WHERE `prod_id` =? AND `tbl_name` = ?";
-                                        $updateStockData = $db->query($query, [$EncodeStock, $TallyproductID, $tableName]);
-                                        $affectedRows = $db->affectedRows();
-                                    }
-
-
-                                    if ($affectedRows == 1) {
-                                        $qty = $MainQuantity - $oldConfigStock;
-
-                                        $newQuantity = $qty + $Tallystock;
-
-                                        $updateMainQty = "UPDATE $tableName SET quantity = ? WHERE prod_id = ? AND tbl_name =?";
-                                        $updateData = $db->query($updateMainQty, [$newQuantity, $TallyproductID, $tableName]);
-                                    }
+                                if ($result && $result->count > 0) {
+                                    $updateconfig = $result;
+                                    break;
                                 }
                             }
+
+
+                            $TallyproductID = $updateconfig->prod_id;
+                            $tableName = $updateconfig->tbl_name;
+                            $MainQuantity = $updateconfig->quantity;
+
+                            $configquery = "SELECT * FROM `tbl_configuration` WHERE `tbl_name` = ? AND `prod_id` = ?";
+                            $getConfigData = $db->query($configquery, [$tableName, $TallyproductID])->getResultArray();
+
+
+                            if (count($getConfigData) > 0) {
+                                $size = json_decode($getConfigData[0]['size']);
+                                $stock = json_decode($getConfigData[0]['soldout_status']);
+
+                                $newStock = $stock;
+
+                                for ($i = 0; $i < count($size); $i++) {
+
+                                    if ($size[$i] == $Tallysize) {
+                                        $oldConfigStock = $stock[$i];
+                                        $newStock[$i] = $Tallystock;
+                                    }
+                                }
+
+                                $EncodeStock = json_encode($newStock);
+
+                                if ($EncodeStock != $stock) {
+
+                                    $query = "UPDATE tbl_configuration SET `soldout_status` = ? 
+                                              WHERE `prod_id` =? AND `tbl_name` = ?";
+                                    $updateStockData = $db->query($query, [$EncodeStock, $TallyproductID, $tableName]);
+                                    $affectedRows = $db->affectedRows();
+                                }
+
+
+                                if ($affectedRows == 1) {
+                                    $qty = $MainQuantity - $oldConfigStock;
+
+                                    $newQuantity = $qty + $Tallystock;
+
+                                    $updateMainQty = "UPDATE $tableName SET quantity = ? WHERE prod_id = ? AND tbl_name =?";
+                                    $updateData = $db->query($updateMainQty, [$newQuantity, $TallyproductID, $tableName]);
+                                }
+                            }
+
+
+
+
                         }
-
                     }
-
                 }
             }
+            die;
 
-            return $this->respond(['message' => 'Products updated successfully.'], 200);
+
+            // return $this->respond(['message' => 'Products updated successfully.'], 200);
         } catch (\Exception $e) {
             return $this->failServerError("Error occurred: " . $e->getMessage());
         }
