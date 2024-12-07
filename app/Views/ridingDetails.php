@@ -193,17 +193,18 @@
                                             <div class='window d-flex'>
                                                     <?php
                                                     $size = $r_details['size'];
+                                                    $stock = $r_details['stock'];
                                                     if ($size[0] != "") {
                                                         $count = count($size);
 
                                                         if ($count > 0) { ?>
                                                             <div class='size-picker col-lg-6 col-md-6 p-0 mt-3'>
-                                                                <p>Size:  <?php echo count($size)?></p>
+                                                                <p>Size:</p>
 
                                                                 <select class='range-picker size-details' name="size"
-                                                                    id="size-<?php echo $i ?>">
+                                                                    id="size-<?php echo $i ?>" >
                                                                     <?php for ($i = 0; $i < $count; $i++) { ?>
-                                                                        <option value="<?php echo $size[$i] ?>"><?php echo $size[$i] ?></option>
+                                                                        <option value="<?php echo $size[$i] ?>" data-sizestock ="<?php echo $stock[$i] ?>"><?php echo $size[$i] ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -294,13 +295,24 @@
                                         value="<?php echo $r_details['prod_id'] ?>" />
                                     <input type="hidden" name="prod_price" id="prod_price"
                                         value="<?php echo $r_details['offer_price'] ?>" />
+                                    
+
+                                    <!-- Stock based on Size -->
+                                    <?php
+                                    $countSize = count($r_details['size']);
+                                
+                                    ?>
+
+                                    <!-- For Quantity Updates -->
+                                     <input type="hidden" class="main-stock" value="<?= $r_details['quantity'] ?>" data-sizeval="<?= $countSize ?>">
+
 
                                     <div class="addto_cart ">
                                         <div class="col-lg-12 btn-detail">
                                             <div class="col-lg-4 ">
                                                 <div class="number">
                                                     <span class="minus">-</span>
-                                                    <input id="quantity" name="quantity" type="text" value="1" stock-qty="<?=$r_details['quantity'] ?>"
+                                                    <input id="quantity" name="quantity" type="text" value="1" stock-qty="<?=$quantity?>"
                                                         placeholder="1" />
                                                     <span class="plus">+</span>
                                                 </div>
@@ -799,6 +811,35 @@
     <a href="#" id="back-to-top"></a>
     <?php require("components/footer.php"); ?>
 
+
+    <script>
+     
+
+        let main_stock = $(".main-stock").val();
+        let sizecount =  $(".main-stock").data('sizeval');
+
+        alert(main_stock);
+        alert(sizecount);
+        
+        let initialSize = $(".size-details").val();
+        let sizeStock =  $(".size-details option:selected").data("sizestock");
+
+        
+
+
+        console.log("Initial selected size: " + initialSize); 
+      
+
+        // On dropdown value change, get the new selected value
+        $(".size-details").on("change", function () {
+            let selectedSize = $(this).val(); // Retrieve the selected value
+            console.log("Changed size: " + selectedSize);
+            alert("Changed size: " + selectedSize);
+        });
+      
+
+     
+    </script>
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {

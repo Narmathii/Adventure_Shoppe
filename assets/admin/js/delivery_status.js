@@ -297,10 +297,10 @@ $(document).ready(function () {
       url: base_Url + "get-order-details",
       success: function (data) {
         let viewOrder = $.parseJSON(data);
-        console.log(viewOrder[0]["address"]);
         let sizee = viewOrder.length;
 
         // Address
+        $("#user-name").html(viewOrder[0]["username"]);
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );

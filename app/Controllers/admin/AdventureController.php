@@ -14,27 +14,27 @@ class AdventureController extends BaseController
 
         $session = $this->session = \Config\Services::session();
 
-        $res['pending_order'] = $db->query("SELECT COUNT(`order_id`) AS pending_order FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 2
+        $res['pending_order'] = $db->query("SELECT COUNT(`order_id`) AS pending_order FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 3
         GROUP BY delivery_status")->getResultArray();
-        $res['new_order'] = $db->query("SELECT COUNT(`order_id`) AS new_order FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 1
+        $res['new_order'] = $db->query("SELECT COUNT(`order_id`) AS new_order FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 2
         GROUP BY delivery_status")->getResultArray();
-        $res['shipping_status'] = $db->query("SELECT COUNT(`order_id`) AS shipping_status FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 3
+        $res['shipping_status'] = $db->query("SELECT COUNT(`order_id`) AS shipping_status FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 4
         GROUP BY delivery_status")->getResultArray();
-        $res['delivery_status'] = $db->query("SELECT COUNT(`order_id`) AS delivery_status FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 4
+        $res['delivery_status'] = $db->query("SELECT COUNT(`order_id`) AS delivery_status FROM `tbl_orders` WHERE  flag= 1 AND `delivery_status` = 5
         GROUP BY delivery_status")->getResultArray();
 
         $res['refund_status'] = $db->query("
         SELECT COUNT(`order_id`) AS delivery_status 
             FROM `tbl_orders` 
             WHERE flag = 1 
-            AND (`delivery_status` = 6 OR `delivery_status` = 7 OR `delivery_status` = 8)
+            AND (`delivery_status` = 7 OR `delivery_status` = 8 OR `delivery_status` = 9)
             ")->getResultArray();
 
         $res['cancelled_status'] = $db->query("
         SELECT COUNT(`order_id`) AS delivery_status 
         FROM `tbl_orders` 
         WHERE flag = 1 
-        AND `delivery_status` = 5")->getResultArray();
+        AND `delivery_status` = 6")->getResultArray();
 
 
 

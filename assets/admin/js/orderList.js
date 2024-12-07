@@ -322,7 +322,12 @@ $(document).ready(function () {
         );
 
         const paymentStatus = viewOrder[0]["payment_status"];
-        if (paymentStatus === "PENDING") {
+        const OrderStatus = viewOrder[0]["order_status"];
+
+        alert(OrderStatus);
+        alert(paymentStatus === "PENDING" && OrderStatus === "initiated");
+
+        if (paymentStatus === "PENDING" && OrderStatus != "initiated") {
           $("#payment-sts-btn").css("display", "block");
           $("#payment-sts-btn").attr("order-id", orderid);
         } else {

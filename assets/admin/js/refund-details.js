@@ -1,347 +1,348 @@
 $(document).ready(function () {
-    var mode, JSON, res_DATA, order_id, dispStatus, PrintID;
-    var orderID = "";
-  
-    $.when(getOrderList()).done(function () {
-      dispOrderDetails(JSON);
+  var mode, JSON, res_DATA, order_id, dispStatus, PrintID;
+  var orderID = "";
+
+  $.when(getOrderList()).done(function () {
+    dispOrderDetails(JSON);
+  });
+
+  function refreshDetails() {
+    $.when(getOrderList()).done(function (brandDetails) {
+      var table = $("#datatable").DataTable();
+      table.clear();
+      table.rows.add(brandDetails);
+      table.draw();
+      window.location.reload();
     });
-  
-    function refreshDetails() {
-      $.when(getOrderList()).done(function (brandDetails) {
-        var table = $("#datatable").DataTable();
-        table.clear();
-        table.rows.add(brandDetails);
-        table.draw();
-        window.location.reload();
-      });
-    }
-  
-    // *************************** [get Data] *************************************************************************
-    function getOrderList() {
-      $.ajax({
-        type: "POST",
-        url: base_Url + "get-refundetails",
-        dataType: "json",
-        success: function (data) {
-          res_DATA = data;
-          dispOrderDetails(res_DATA);
+  }
+
+  // *************************** [get Data] *************************************************************************
+  function getOrderList() {
+    $.ajax({
+      type: "POST",
+      url: base_Url + "get-refundetails",
+      dataType: "json",
+      success: function (data) {
+        res_DATA = data;
+        dispOrderDetails(res_DATA);
+      },
+      error: function () {
+        console.log("Error");
+      },
+    });
+  }
+  // *************************** [Display Data] *************************************************************************
+
+  function dispOrderDetails(JSON) {
+    var i = 1;
+    $("#datatable").DataTable({
+      destroy: true,
+      aaSorting: [],
+      aaData: JSON,
+      aoColumns: [
+        {
+          mDataProp: null,
+          render: function (data, type, row, meta) {
+            return i++;
+          },
         },
-        error: function () {
-          console.log("Error");
+        {
+          mDataProp: "order_no",
         },
-      });
-    }
-    // *************************** [Display Data] *************************************************************************
-  
-    function dispOrderDetails(JSON) {
-      var i = 1;
-      $("#datatable").DataTable({
-        destroy: true,
-        aaSorting: [],
-        aaData: JSON,
-        aoColumns: [
-          {
-            mDataProp: null,
-            render: function (data, type, row, meta) {
-              return i++;
-            },
-          },
-          {
-            mDataProp: "order_no",
-          },
-          {
-            mDataProp: "username",
-          },
-          {
-            mDataProp: "order_date",
-          },
-          {
-            mDataProp: function (data, type, full, meta) {
-              return (
-                '<a  order-id = "' +
-                data.order_id +
-                '" id="' +
-                meta.row +
-                '" class="btn orderDetails text-info fs-14 lh-1"> <i class="fe fe-eye" data-bs-effect="effect-scale" data-bs-toggle="modal"></i> View</a>'
-              );
-            },
-          },
-          {
-            mDataProp: function (data, type, full, meta) {
-              var status = data.payment_status;
-  
-              var backgroundclr;
-              if (status == "PENDING") {
-                backgroundclr = "badge bg-warning";
-              } else if (status == "COMPLETED") {
-                backgroundclr = "badge bg-success";
-              } else if (status == "FAILED") {
-                backgroundclr = "badge bg-danger";
-              } else if (status == "CANCELLED") {
-                backgroundclr = "badge bg-danger";
-              } else if (status == "REFUNDED") {
-                backgroundclr = "badge bg-info";
-              }
-              return (
-                '<a id="' +
-                meta.row +
-                '" class="btn" merchant-id="' +
-                data.transaction_id +
-                '" tnx-id="' +
-                data.txnid +
-                '" salt="' +
-                data.salt +
-                '"><span class="badge ' +
-                backgroundclr +
-                '">' +
-                status +
-                "</span></a>"
-              );
-            },
-          },
-          {
-            mDataProp: "delivery_date",
-          },
-          {
-            mDataProp: function (data, type, full, meta) {
-              var status = data.delivery_status;
-  
-              var backgroundclr;
-              if (status == "New") {
-                backgroundclr = "badge bg-info";
-              } else if (status == "Pending") {
-                backgroundclr = "badge bg-warning";
-              } else if (status == "Shipped") {
-                backgroundclr = "badge bg-secondary-gradient";
-              } else if (status == "Delivered") {
-                backgroundclr = "badge bg-success";
-              } else if (status == "Cancelled") {
-                backgroundclr = "badge bg-danger";
-              } else if (status == "Refund Created") {
-                backgroundclr = "badge bg-warning";
-              } else if (status == "Refund Processed") {
-                backgroundclr = "badge bg-success";
-              } else if (status == "Refund Failed") {
-                backgroundclr = "badge bg-danger";
-              }
-              return (
-                '<a id="' +
-                meta.row +
-                '" class="btn BtnOrdersts" merchant-id="' +
-                data.transaction_id +
-                '" tnx-id="' +
-                data.txnid +
-                '" salt="' +
-                data.salt +
-                '"><span class="badge ' +
-                backgroundclr +
-                '">' +
-                status +
-                "</span></a>"
-              );
-            },
-          },
-          {
-            mDataProp: function (data, type, full, meta) {
-              return (
-                '<a id="' +
-                meta.row +
-                '" class="btn BtnEdit text-danger fs-14 lh-1"><i class="ri-edit-line"></i></a>' +
-                '<a order-id="' +
-                data.order_id +
-                '" id="' +
-                meta.row +
-                '" class="btn BtnTrackView text-danger fs-14 lh-1"><i class="fe fe-eye" data-bs-effect="effect-scale"></i></a>' +
-                '<a id="' +
-                meta.row +
-                '" class="btn BtnDelete text-danger fs-14 lh-1"><i class="ri-delete-bin-5-line"></i></a>'
-              );
-            },
-          },
-        ],
-      });
-    }
-    // *************************** [Change delivery status] *************************************************************************
-  
-    $(document).on("click", ".BtnOrdersts", function () {
-      $("#delivery-status").modal("show");
-  
-      var index = $(this).attr("id");
-      orderID = res_DATA[index].order_id;
-    });
-  
-    $("#submit-status").click(function () {
-      var delivery_status = $("#delivery_status").val();
-  
-      $.ajax({
-        type: "post",
-        url: base_Url + "update-delivery-status",
-        data: { order_id: orderID, delivery_status: delivery_status },
-        dataType: "json",
-  
-        success: function (data) {
-          if (data.code == 200) {
-            location.reload();
-          } else {
-            Swal.fire({
-              title: "Failure",
-              text: data.msg,
-              icon: "error",
-            });
-            $("#delivery-status").modal("hide");
-          }
+        {
+          mDataProp: "username",
         },
-      });
-    });
-  
-    // *************************** [Check order status] *************************************************************************
-  
-    $(document).on("click", ".BtnOrdersts", function () {
-      $tnxID = $(this).attr("tnx-id");
-      $merchantID = $(this).attr("merchant-id");
-      $salt = $(this).attr("salt");
-    });
-  
-    // *************************** [Edit Data] *************************************************************************
-    $(document).on("click", ".BtnEdit", function () {
-      $("#tracking-order").modal("show");
-  
-      var index = $(this).attr("id");
-      orderID = res_DATA[index].order_id;
-  
-      $.ajax({
-        type: "post",
-        url: base_Url + "get-trackingdetails",
-        data: { order_id: orderID },
-  
-        success: function (data) {
-          let result = $.parseJSON(data);
-          if (result.code == 200) {
-            $("#courier_partner").val(result.track_detail[0]["courier_partner"]);
-            $("#tracking_id").val(result.track_detail[0]["tracking_id"]);
-            // $("#coupon_code").val(result.track_detail[0]["coupon_code"]);
-            let billDate = result.track_detail[0]["bill_date"];
-            $("#bill_no").val(result.track_detail[0]["bill_no"]);
-            let deliveryDate = result.track_detail[0]["delivery_date"];
-  
-            if (deliveryDate == "0000-00-00" || billDate == "0000-00-00") {
-              $(".del-date").val("");
-              $(".bill-date").val("");
-            } else {
-              $(".del-date").val(deliveryDate);
-              $(".bill-date").val(billDate);
+        {
+          mDataProp: "order_date",
+        },
+        {
+          mDataProp: function (data, type, full, meta) {
+            return (
+              '<a  order-id = "' +
+              data.order_id +
+              '" id="' +
+              meta.row +
+              '" class="btn orderDetails text-info fs-14 lh-1"> <i class="fe fe-eye" data-bs-effect="effect-scale" data-bs-toggle="modal"></i> View</a>'
+            );
+          },
+        },
+        {
+          mDataProp: function (data, type, full, meta) {
+            var status = data.payment_status;
+
+            var backgroundclr;
+            if (status == "PENDING") {
+              backgroundclr = "badge bg-warning";
+            } else if (status == "COMPLETED") {
+              backgroundclr = "badge bg-success";
+            } else if (status == "FAILED") {
+              backgroundclr = "badge bg-danger";
+            } else if (status == "CANCELLED") {
+              backgroundclr = "badge bg-danger";
+            } else if (status == "REFUNDED") {
+              backgroundclr = "badge bg-info";
             }
-          }
+            return (
+              '<a id="' +
+              meta.row +
+              '" class="btn" merchant-id="' +
+              data.transaction_id +
+              '" tnx-id="' +
+              data.txnid +
+              '" salt="' +
+              data.salt +
+              '"><span class="badge ' +
+              backgroundclr +
+              '">' +
+              status +
+              "</span></a>"
+            );
+          },
         },
-      });
+        {
+          mDataProp: "delivery_date",
+        },
+        {
+          mDataProp: function (data, type, full, meta) {
+            var status = data.delivery_status;
+
+            var backgroundclr;
+            if (status == "New") {
+              backgroundclr = "badge bg-info";
+            } else if (status == "Pending") {
+              backgroundclr = "badge bg-warning";
+            } else if (status == "Shipped") {
+              backgroundclr = "badge bg-secondary-gradient";
+            } else if (status == "Delivered") {
+              backgroundclr = "badge bg-success";
+            } else if (status == "Cancelled") {
+              backgroundclr = "badge bg-danger";
+            } else if (status == "Refund Created") {
+              backgroundclr = "badge bg-warning";
+            } else if (status == "Refund Processed") {
+              backgroundclr = "badge bg-success";
+            } else if (status == "Refund Failed") {
+              backgroundclr = "badge bg-danger";
+            }
+            return (
+              '<a id="' +
+              meta.row +
+              '" class="btn BtnOrdersts" merchant-id="' +
+              data.transaction_id +
+              '" tnx-id="' +
+              data.txnid +
+              '" salt="' +
+              data.salt +
+              '"><span class="badge ' +
+              backgroundclr +
+              '">' +
+              status +
+              "</span></a>"
+            );
+          },
+        },
+        {
+          mDataProp: function (data, type, full, meta) {
+            return (
+              '<a id="' +
+              meta.row +
+              '" class="btn BtnEdit text-danger fs-14 lh-1"><i class="ri-edit-line"></i></a>' +
+              '<a order-id="' +
+              data.order_id +
+              '" id="' +
+              meta.row +
+              '" class="btn BtnTrackView text-danger fs-14 lh-1"><i class="fe fe-eye" data-bs-effect="effect-scale"></i></a>' +
+              '<a id="' +
+              meta.row +
+              '" class="btn BtnDelete text-danger fs-14 lh-1"><i class="ri-delete-bin-5-line"></i></a>'
+            );
+          },
+        },
+      ],
     });
-  
-    // *************************** [Delete Data] *************************************************************************
-    $(document).on("click", ".BtnDelete", function () {
-      mode = "delete";
-      var index = $(this).attr("id");
-      order_id = res_DATA[index].order_id;
-  
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You want to delete it?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $.ajax({
-            type: "POST",
-            url: base_Url + "delete-orderlist",
-            data: { order_id: order_id },
-  
-            success: function (data) {
-              var resData = $.parseJSON(data);
-  
-              if (resData.code == 200) {
-                Swal.fire({
-                  title: "Congratulations!",
-                  text: resData["message"],
-                  icon: "success",
-                });
-                $("#model-data").modal("hide");
-                refreshDetails();
-              } else {
-                Swal.fire({
-                  title: "Failure",
-                  text: resData["message"],
-                  icon: "danger",
-                });
-                $("#model-data").modal("hide");
-                refreshDetails();
-              }
-            },
+  }
+  // *************************** [Change delivery status] *************************************************************************
+
+  $(document).on("click", ".BtnOrdersts", function () {
+    $("#delivery-status").modal("show");
+
+    var index = $(this).attr("id");
+    orderID = res_DATA[index].order_id;
+  });
+
+  $("#submit-status").click(function () {
+    var delivery_status = $("#delivery_status").val();
+
+    $.ajax({
+      type: "post",
+      url: base_Url + "update-delivery-status",
+      data: { order_id: orderID, delivery_status: delivery_status },
+      dataType: "json",
+
+      success: function (data) {
+        if (data.code == 200) {
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Failure",
+            text: data.msg,
+            icon: "error",
           });
+          $("#delivery-status").modal("hide");
         }
-      });
+      },
     });
-    // *************************** [Order Details] *************************************************************************
-    $(document).on("click", ".orderDetails", function () {
-      $("#order_form").modal("show");
-      var orderid = $(this).attr("order-id");
-  
-      PrintID = orderid;
-      var index = $(this).attr("id");
-  
-      $.ajax({
-        type: "POST",
-        data: { order_id: orderid },
-        url: base_Url + "get-order-details",
-        success: function (data) {
-          let viewOrder = $.parseJSON(data);
-          console.log(viewOrder[0]["address"]);
-          let sizee = viewOrder.length;
-  
-          // Address
-          $("#address").html(
-            viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
-          );
-          $("#city").html(viewOrder[0]["city"] + "," + viewOrder[0]["dist_name"]);
-          $("#number").html(viewOrder[0]["number"]);
-          $("#state_title").html(
-            viewOrder[0]["state_title"] + "-" + viewOrder[0]["pincode"]
-          );
-  
-          //Payment status
-          $("#total-amt").html(
-            "Total Amount - &#8377;" + viewOrder[0]["sub_total"]
-          );
-          $("#trans-id").html("Order ID -" + viewOrder[0]["order_no"]);
-          $("#payment-id").html(
-            "Payment ID -" + viewOrder[0]["razerpay_payment_id"]
-          );
-  
-          var status = "";
-          if (
-            viewOrder[0]["payment_status"] == "FAILED" ||
-            viewOrder[0]["payment_status"] == "CANCELLED"
-          ) {
-            status += `Payment Status - <span class="badge bg-danger-gradient">${viewOrder[0]["payment_status"]}</span>`;
-          } else if (viewOrder[0]["payment_status"] == "PENDING") {
-            status += `Payment Status - <span class="badge bg-warning">${viewOrder[0]["payment_status"]}</span>`;
-          } else if (viewOrder[0]["payment_status"] == "REFUNDED") {
-            status += `Payment Status - <span class="badge bg-info">${viewOrder[0]["payment_status"]}</span>`;
+  });
+
+  // *************************** [Check order status] *************************************************************************
+
+  $(document).on("click", ".BtnOrdersts", function () {
+    $tnxID = $(this).attr("tnx-id");
+    $merchantID = $(this).attr("merchant-id");
+    $salt = $(this).attr("salt");
+  });
+
+  // *************************** [Edit Data] *************************************************************************
+  $(document).on("click", ".BtnEdit", function () {
+    $("#tracking-order").modal("show");
+
+    var index = $(this).attr("id");
+    orderID = res_DATA[index].order_id;
+
+    $.ajax({
+      type: "post",
+      url: base_Url + "get-trackingdetails",
+      data: { order_id: orderID },
+
+      success: function (data) {
+        let result = $.parseJSON(data);
+        if (result.code == 200) {
+          $("#courier_partner").val(result.track_detail[0]["courier_partner"]);
+          $("#tracking_id").val(result.track_detail[0]["tracking_id"]);
+          // $("#coupon_code").val(result.track_detail[0]["coupon_code"]);
+          let billDate = result.track_detail[0]["bill_date"];
+          $("#bill_no").val(result.track_detail[0]["bill_no"]);
+          let deliveryDate = result.track_detail[0]["delivery_date"];
+
+          if (deliveryDate == "0000-00-00" || billDate == "0000-00-00") {
+            $(".del-date").val("");
+            $(".bill-date").val("");
           } else {
-            status += `Payment Status - <span class="badge bg-success">${viewOrder[0]["payment_status"]}</span>`;
+            $(".del-date").val(deliveryDate);
+            $(".bill-date").val(billDate);
           }
-  
-          $("#payment-sts").html("" + status);
-  
-          let tblData = "";
-          for (i = 0; i < sizee; i++) {
-            let size = viewOrder[i]["size"] != 0 ? viewOrder[i]["size"] : "";
-            let className = viewOrder[i]["size"] != 0 ? " " : "d-none";
-            let color =
-              viewOrder[i]["color"] != 0 ? viewOrder[i]["color_name"] : "N/A";
-            let classNamee = viewOrder[i]["color"] != 0 ? " " : "d-none";
-            tblData += `
+        }
+      },
+    });
+  });
+
+  // *************************** [Delete Data] *************************************************************************
+  $(document).on("click", ".BtnDelete", function () {
+    mode = "delete";
+    var index = $(this).attr("id");
+    order_id = res_DATA[index].order_id;
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete it?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: "POST",
+          url: base_Url + "delete-orderlist",
+          data: { order_id: order_id },
+
+          success: function (data) {
+            var resData = $.parseJSON(data);
+
+            if (resData.code == 200) {
+              Swal.fire({
+                title: "Congratulations!",
+                text: resData["message"],
+                icon: "success",
+              });
+              $("#model-data").modal("hide");
+              refreshDetails();
+            } else {
+              Swal.fire({
+                title: "Failure",
+                text: resData["message"],
+                icon: "danger",
+              });
+              $("#model-data").modal("hide");
+              refreshDetails();
+            }
+          },
+        });
+      }
+    });
+  });
+  // *************************** [Order Details] *************************************************************************
+  $(document).on("click", ".orderDetails", function () {
+    $("#order_form").modal("show");
+    var orderid = $(this).attr("order-id");
+
+    PrintID = orderid;
+    var index = $(this).attr("id");
+
+    $.ajax({
+      type: "POST",
+      data: { order_id: orderid },
+      url: base_Url + "get-order-details",
+      success: function (data) {
+        let viewOrder = $.parseJSON(data);
+        console.log(viewOrder[0]["address"]);
+        let sizee = viewOrder.length;
+
+        // Address
+        $("#user-name").html(viewOrder[0]["username"]);
+        $("#address").html(
+          viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
+        );
+        $("#city").html(viewOrder[0]["city"] + "," + viewOrder[0]["dist_name"]);
+        $("#number").html(viewOrder[0]["number"]);
+        $("#state_title").html(
+          viewOrder[0]["state_title"] + "-" + viewOrder[0]["pincode"]
+        );
+
+        //Payment status
+        $("#total-amt").html(
+          "Total Amount - &#8377;" + viewOrder[0]["sub_total"]
+        );
+        $("#trans-id").html("Order ID -" + viewOrder[0]["order_no"]);
+        $("#payment-id").html(
+          "Payment ID -" + viewOrder[0]["razerpay_payment_id"]
+        );
+
+        var status = "";
+        if (
+          viewOrder[0]["payment_status"] == "FAILED" ||
+          viewOrder[0]["payment_status"] == "CANCELLED"
+        ) {
+          status += `Payment Status - <span class="badge bg-danger-gradient">${viewOrder[0]["payment_status"]}</span>`;
+        } else if (viewOrder[0]["payment_status"] == "PENDING") {
+          status += `Payment Status - <span class="badge bg-warning">${viewOrder[0]["payment_status"]}</span>`;
+        } else if (viewOrder[0]["payment_status"] == "REFUNDED") {
+          status += `Payment Status - <span class="badge bg-info">${viewOrder[0]["payment_status"]}</span>`;
+        } else {
+          status += `Payment Status - <span class="badge bg-success">${viewOrder[0]["payment_status"]}</span>`;
+        }
+
+        $("#payment-sts").html("" + status);
+
+        let tblData = "";
+        for (i = 0; i < sizee; i++) {
+          let size = viewOrder[i]["size"] != 0 ? viewOrder[i]["size"] : "";
+          let className = viewOrder[i]["size"] != 0 ? " " : "d-none";
+          let color =
+            viewOrder[i]["color"] != 0 ? viewOrder[i]["color_name"] : "N/A";
+          let classNamee = viewOrder[i]["color"] != 0 ? " " : "d-none";
+          tblData += `
             <tr>
   
              <td> 
@@ -356,8 +357,8 @@ $(document).ready(function () {
                     <div class="me-3">
                         <span class="avatar avatar-xxl bg-light">
                             <img src="${base_Url}${
-              viewOrder[i]["config_image1"]
-            }" alt="">
+            viewOrder[i]["config_image1"]
+          }" alt="">
                         </span>
                     </div>
                    
@@ -366,7 +367,9 @@ $(document).ready(function () {
             <td> 
   
             <div class="mb-1 fs-14 fw-semibold order-prodname">
-                <a href="javascript:void(0);">${viewOrder[i]["product_name"]}</a>
+                <a href="javascript:void(0);">${
+                  viewOrder[i]["product_name"]
+                }</a>
   
             </div>
             
@@ -389,10 +392,10 @@ $(document).ready(function () {
        
         
     </tr>`;
-            $("#order-details tbody").html(tblData);
-          }
-  
-          const totalAmt = `
+          $("#order-details tbody").html(tblData);
+        }
+
+        const totalAmt = `
           <tr>
             <td colspan="2"></td>
             <td colspan="2">
@@ -413,77 +416,77 @@ $(document).ready(function () {
             </td>
           </tr>
          `;
-  
-          $("#order-details tbody").append(totalAmt);
-        },
-        error: function () {
-          console.log("Error");
-        },
-      });
+
+        $("#order-details tbody").append(totalAmt);
+      },
+      error: function () {
+        console.log("Error");
+      },
     });
-  
-    // *************************** [Submit Tracking Detail] *************************************************************************
-    $("#submit-track").click(function () {
-      if ($("#courier_partner").val() == "") {
-        $(".courier_partner").html("Please Enter the Courier Partner");
-      } else if ($("#tracking_id").val() == "") {
-        $(".tracking_id").html("Please Enter the Tracking ID");
-      } else {
-        insertTrackingDetails();
-      }
-    });
-  
-    function insertTrackingDetails() {
-      var form = $("#tracking-form")[0];
-      data = new FormData(form);
-      data.append("order_id", orderID);
-  
-      $.ajax({
-        type: "POST",
-        data: data,
-        url: base_Url + "update-trackingdetail",
-        dataType: "json",
-        processData: false,
-        contentType: false,
-  
-        success: function (data) {
-          if (data.code == 200) {
-            Swal.fire({
-              title: "Congratulations!",
-              text: data.msg,
-              icon: "success",
-            });
-            $("#tracking-order").modal("hide");
-            location.reload();
-          } else {
-            Swal.fire({
-              title: "Failure!",
-              text: data.msg,
-              icon: "danger",
-            });
-            $("#tracking-order").modal("hide");
-          }
-        },
-      });
+  });
+
+  // *************************** [Submit Tracking Detail] *************************************************************************
+  $("#submit-track").click(function () {
+    if ($("#courier_partner").val() == "") {
+      $(".courier_partner").html("Please Enter the Courier Partner");
+    } else if ($("#tracking_id").val() == "") {
+      $(".tracking_id").html("Please Enter the Tracking ID");
+    } else {
+      insertTrackingDetails();
     }
-  
-    // *************************** [View Tracking Detail] *************************************************************************
-  
-    $(document).on("click", ".BtnTrackView", function () {
-      $("#tracking-view").modal("show");
-  
-      var orderid = $(this).attr("order-id");
-  
-      $.ajax({
-        type: "POST",
-        data: { order_id: orderid },
-        url: base_Url + "view-trackingdetail",
-        dataType: "json",
-  
-        success: function (data) {
-          $("#tracking-details tbody").empty();
-          let tblData = "";
-          tblData += `
+  });
+
+  function insertTrackingDetails() {
+    var form = $("#tracking-form")[0];
+    data = new FormData(form);
+    data.append("order_id", orderID);
+
+    $.ajax({
+      type: "POST",
+      data: data,
+      url: base_Url + "update-trackingdetail",
+      dataType: "json",
+      processData: false,
+      contentType: false,
+
+      success: function (data) {
+        if (data.code == 200) {
+          Swal.fire({
+            title: "Congratulations!",
+            text: data.msg,
+            icon: "success",
+          });
+          $("#tracking-order").modal("hide");
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Failure!",
+            text: data.msg,
+            icon: "danger",
+          });
+          $("#tracking-order").modal("hide");
+        }
+      },
+    });
+  }
+
+  // *************************** [View Tracking Detail] *************************************************************************
+
+  $(document).on("click", ".BtnTrackView", function () {
+    $("#tracking-view").modal("show");
+
+    var orderid = $(this).attr("order-id");
+
+    $.ajax({
+      type: "POST",
+      data: { order_id: orderid },
+      url: base_Url + "view-trackingdetail",
+      dataType: "json",
+
+      success: function (data) {
+        $("#tracking-details tbody").empty();
+        let tblData = "";
+        tblData += `
           <tr>
          <td>${data[0]["courier_partner"]}</td>
          <td>${data[0]["tracking_id"]}</td>
@@ -493,28 +496,27 @@ $(document).ready(function () {
              <td>${data[0]["bill_no"]}</td>
             <td>${data[0]["bill_date"]}</td>
          </tr>`;
-  
-          $("#tracking-details tbody").append(tblData);
-        },
-      });
-    });
-  
-    // *************************** [Print Details] *************************************************************************
-    $("#btn-print").click(function () {
-      let print_id = PrintID;
-      var encodedPrintID = btoa(print_id);
-      var pdfURL = base_Url + "pdf-viewpage/" + encodedPrintID;
-  
-      var printWindow = window.open(pdfURL, "_blank");
-  
-      if (printWindow) {
-        printWindow.print();
-        printWindow.onafterprint = function () {
-          printWindow.close();
-        };
-      } else {
-        alert("Popup blocked! Please allow popups for this site.");
-      }
+
+        $("#tracking-details tbody").append(tblData);
+      },
     });
   });
-  
+
+  // *************************** [Print Details] *************************************************************************
+  $("#btn-print").click(function () {
+    let print_id = PrintID;
+    var encodedPrintID = btoa(print_id);
+    var pdfURL = base_Url + "pdf-viewpage/" + encodedPrintID;
+
+    var printWindow = window.open(pdfURL, "_blank");
+
+    if (printWindow) {
+      printWindow.print();
+      printWindow.onafterprint = function () {
+        printWindow.close();
+      };
+    } else {
+      alert("Popup blocked! Please allow popups for this site.");
+    }
+  });
+});

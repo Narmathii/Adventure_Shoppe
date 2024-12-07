@@ -389,7 +389,7 @@
                                                 <li>
                                                     <label class="order_id">Order Status</label>
                                                     <div class="status-container d-flex">
-                                                        <?php $className = $orderDetails[0]['delivery_status'] == "Cancelled" ? "cancel_order" : "placed_order" ?>
+                                                        <?php $className = ($orderDetails[0]['delivery_status'] == "Cancelled" || $orderDetails[0]['delivery_status'] == "Order Pending") ? "cancel_order" : "placed_order" ?>
                                                         <?php $delStatus = $orderDetails[0]['delivery_status'];
                                                         if ($delStatus == 'New') {
                                                             $delMessage = 'Your order has been placed';
@@ -405,6 +405,8 @@
                                                             $delMessage = 'The refund has been created';
                                                         } else if ($delStatus == 'Refund Processed') {
                                                             $delMessage = 'Refund credited within 5-7 days.';
+                                                        } else if ($delStatus == 'Order Pending') {
+                                                            $delMessage = 'Payment not Confirmed';
                                                         } else if ($delStatus == 'Refund Failed') {
                                                             $delMessage = 'Refund Failed';
 

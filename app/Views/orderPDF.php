@@ -91,7 +91,7 @@
 </head>
 
 <body>
- <div>
+    <div>
 
         <!-- PAGE -->
         <div class="page">
@@ -102,6 +102,12 @@
                 </div>
                 <table class="tbl-address mt-4">
                     <thead>
+                        <tr>
+                            <th scope="col" style="width: 60%; border: 1px solid #000;">Customer Name</th>
+                            <td scope="col" style="width: 60%; border: 1px solid #000;">
+                                <?php echo $data[0]['username'] ?></td>
+
+                        </tr>
                         <tr>
                             <th scope="col" style="width: 60%; border: 1px solid #000;">Address</th>
                             <th scope="col" style="text-align: start;width: 40%">Payment history</th>

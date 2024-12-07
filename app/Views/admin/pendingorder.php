@@ -95,6 +95,8 @@
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
+                                            <p class="name-text mt-3" id="user-name">
+                                            </p>
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">
@@ -321,20 +323,13 @@
                 <div class="table-responsive">
                     <table class="table text-nowrap">
                         <div class="table-responsive">
+
                             <select class="form-select" name="delivery_status" id="delivery_status"
                                 aria-label="Default select example">
-                                <option selected>Select Status
-                                </option>
-                                <option value="1">New</option>
-                                <option value="2">Pending</option>
-                                <option value="3">Shipped</option>
-                                <option value="4">Delivered</option>
-                                <option value="5">Cancelled</option>
-                                <option value="6">Refund Created </option>
-                                <option value="7"> Refund Processed</option>
-                                <option value="8"> Refund Failed</option>
-
-
+                                <option selected>Select Status</option>
+                                <?php foreach ($delivery_sts as $key => $status): ?>
+                                    <option value="<?= $key + 1 ?>"><?= $status ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                 </div>

@@ -619,8 +619,8 @@ SELECT DISTINCT
 FROM
     tbl_camping_products AS a 
     INNER JOIN tbl_camping_menu AS b ON a.camp_menu_id = b.camp_menu_id
-    INNER JOIN tbl_camping_submenu AS c ON a.c_submenu_id = c.c_submenu_ida.c_submenu_id = c.c_submenu_id
-     LEFT JOIN brand_master AS d ON a.search_brand = d.brand_master_id
+    INNER JOIN tbl_camping_submenu AS c ON a.c_submenu_id = c.c_submenu_id 
+    LEFT JOIN brand_master AS d ON a.search_brand = d.brand_master_id
 WHERE
     a.`flag` = 1 AND a.`quantity` <= 0  AND b.`flag` = 1 AND c.flag = 1
 GROUP BY a.prod_id

@@ -64,23 +64,18 @@ class TallyController extends ResourceController
     public function syncTallyData()
     {
         try {
-
             $data = $this->request->getBody();
-
-
             $jsonData = json_decode($data, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                echo 'Error decoding JSON: ' . json_last_error_msg();
-                exit;
+                return ['code' => 400, 'message' => 'Error decoding JSON: ' . json_last_error_msg(), 'status' => 'Failure'];
             }
-
 
             if (!is_array($jsonData)) {
-                return $this->failValidationError('Invalid JSON data received.');
+                return ['code' => 400, 'message' => 'Invalid JSON data received.', 'status' => 'Failure'];
             }
-            $db = \Config\Database::connect();
 
+            $db = \Config\Database::connect();
             $table_names = [
                 'tbl_accessories_list',
                 'tbl_rproduct_list',
@@ -89,12 +84,13 @@ class TallyController extends ResourceController
                 'tbl_camping_products'
             ];
 
-            foreach ($jsonData as $item) {
+            $res = []; // Initialize the response array
 
-                if (isset($item['item_name']) && isset($item['quantity'])) {
+            foreach ($jsonData as $item) {
+                if (isset($item['item_name'], $item['quantity'])) {
                     $prodName = $item['item_name'];
                     $Tallystock = intval($item['quantity']);
-                    $updateProd = null; // Initialize variable
+                    $updateProd = null;
 
                     // Search for product in all tables
                     foreach ($table_names as $table) {
@@ -104,103 +100,81 @@ class TallyController extends ResourceController
                         );
                         $result = $query->getRow();
 
-                        // Check if any result is found
                         if ($result && $result->count > 0) {
                             $updateProd = $result;
-                            break; // Found the product, no need to continue loop
+                            break;
                         }
                     }
 
-                    // Process product if found in any table
                     if ($updateProd) {
+                        // Update the product if found
                         $productID = $updateProd->prod_id;
                         $tableName = $updateProd->tbl_name;
 
                         if ($productID != '' && $tableName != '') {
                             $updateQuery = "UPDATE $tableName SET quantity = ? WHERE product_name = ?";
                             $db->query($updateQuery, [$Tallystock, $prodName]);
+
+                            $res['code'] = 400;
+                            $res['status'] = 'Success';
+                            $res['message'] = 'Quantity updated successfully.';
+
+
                         }
                     } else {
-                        // If not found, handle product name and size extraction
-                        $prodName = trim($prodName);
-                        $parts = preg_split('/[-\/_]/', $prodName);
+                        // Handle products with sizes
+                        $sizePattern = '/(?:^|[\s\-])(?:XS|S|M|L|XL|XXL|XXXL|4XL|5XL|6XL|7XL|8XL|9XL)(?=$|[\s\-])/';
+                        preg_match_all($sizePattern, $prodName, $matches);
+                        $size = $matches[0];
 
-                        if (count($parts) >= 2) {
-                            // Extract size and product name
-                            $Tallysize = $parts[count($parts) - 1];
-                            $TallyProductName = implode('-', array_slice($parts, 0, count($parts) - 1));
+                        if (empty($size)) {
 
+
+                            $res['code'] = 400;
+                            $res['status'] = 'Failure';
+                            $res['message'] = 'Size not detected in product name.';
+                            continue;
+
+                        }
+
+                        // Continue processing sizes...
+                        $final_size = preg_replace('/-+/', ' ', $size);
+                        $productName = preg_replace($sizePattern, '', $prodName);
+                        $final_prodname = trim(preg_replace('/-+/', '-', $productName), '- ');
+
+                        if ($final_prodname != '' && $final_size != '') {
                             foreach ($table_names as $table) {
                                 $query = $db->query(
                                     "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
-                                    [$TallyProductName]
+                                    [$final_prodname]
                                 );
                                 $result = $query->getRow();
 
                                 if ($result && $result->count > 0) {
-                                    $updateconfig = $result;
+                                    $getconfig_data = $result;
                                     break;
                                 }
                             }
 
+                            // Handle configuration update...
+                            // Add results to $res here
+                        } else {
 
-                            $TallyproductID = $updateconfig->prod_id;
-                            $tableName = $updateconfig->tbl_name;
-                            $MainQuantity = $updateconfig->quantity;
-
-                            $configquery = "SELECT * FROM `tbl_configuration` WHERE `tbl_name` = ? AND `prod_id` = ?";
-                            $getConfigData = $db->query($configquery, [$tableName, $TallyproductID])->getResultArray();
-
-
-                            if (count($getConfigData) > 0) {
-                                $size = json_decode($getConfigData[0]['size']);
-                                $stock = json_decode($getConfigData[0]['soldout_status']);
-
-                                $newStock = $stock;
-
-                                for ($i = 0; $i < count($size); $i++) {
-
-                                    if ($size[$i] == $Tallysize) {
-                                        $oldConfigStock = $stock[$i];
-                                        $newStock[$i] = $Tallystock;
-                                    }
-                                }
-
-                                $EncodeStock = json_encode($newStock);
-
-                                if ($EncodeStock != $stock) {
-
-                                    $query = "UPDATE tbl_configuration SET `soldout_status` = ? 
-                                              WHERE `prod_id` =? AND `tbl_name` = ?";
-                                    $updateStockData = $db->query($query, [$EncodeStock, $TallyproductID, $tableName]);
-                                    $affectedRows = $db->affectedRows();
-                                }
-
-
-                                if ($affectedRows == 1) {
-                                    $qty = $MainQuantity - $oldConfigStock;
-
-                                    $newQuantity = $qty + $Tallystock;
-
-                                    $updateMainQty = "UPDATE $tableName SET quantity = ? WHERE prod_id = ? AND tbl_name =?";
-                                    $updateData = $db->query($updateMainQty, [$newQuantity, $TallyproductID, $tableName]);
-                                }
-                            }
-
-
+                            $res['code'] = 400;
+                            $res['status'] = 'Failure';
+                            $res['message'] = 'Invalid product name or size.';
 
 
                         }
                     }
                 }
             }
-            die;
 
-
-            // return $this->respond(['message' => 'Products updated successfully.'], 200);
+            return $this->respond($res);
         } catch (\Exception $e) {
-            return $this->failServerError("Error occurred: " . $e->getMessage());
+            return ['code' => 500, 'message' => 'Error occurred: ' . $e->getMessage(), 'status' => 'Failure'];
         }
     }
+
 
 }

@@ -65,8 +65,6 @@ class RazerpayController extends BaseController
 	}
 
 
-
-
 	public function paymentcancel($segment)
 	{
 
@@ -84,13 +82,13 @@ class RazerpayController extends BaseController
 
 		// Updating razerpay order id ,payment id ,paymentstatus 
 		$orderID = session()->get('order_id');
-		$deliveryMsg = 5;
+		$deliveryMsg = 6;
 		$payment_id = "NULL";
 		$razorpay_signature = "NULL";
 		$Orderstatus = "Cancelled Transaction";
-		$deliveryStatus = 5;
+		$deliveryStatus = 6;
 		$payment_status = 4;
-		$cancelReason = "Payment was Cancelled";
+		$cancelReason = "Payment was Cancelled by customer";
 		$orderQry = "UPDATE tbl_orders SET razerpay_payment_id = ?,razerpay_order_id = ?,razerpay_signature = ?,order_status = ? ,delivery_message = ? ,delivery_status = ?,payment_status = ?,cancel_reason= ? WHERE order_id = ?";
 		$updateData = $db->query($orderQry, [$payment_id, $razerpayOrderID, $razorpay_signature, $Orderstatus, $deliveryMsg, $deliveryStatus, $payment_status, $cancelReason, $orderID]);
 
@@ -121,13 +119,13 @@ class RazerpayController extends BaseController
 		$payment_id = isset($response_params['payment_id']) ? $response_params['payment_id'] : null;
 		$Orderstatus = 'Failure';
 		$razorpay_signature = "NULL";
-		$cancelReason = "Payment Failed";
+		$cancelReason = "Payment was unsuccessful as it was cancelled by the customer.";
 
 
 		// Updating razerpay order id ,payment id ,paymentstatus 
 		$orderID = session()->get('order_id');
-		$deliveryMsg = 5;
-		$deliveryStatus = 5;
+		$deliveryMsg = 6;
+		$deliveryStatus = 6;
 		$payment_status = 3;
 		$orderQry = "UPDATE tbl_orders SET razerpay_payment_id = ?,razerpay_order_id = ?,razerpay_signature = ?,order_status = ? ,
 		             delivery_message = ?,delivery_status = ?,payment_status = ? ,cancel_reason = ? WHERE order_id = ?";
@@ -398,8 +396,8 @@ class RazerpayController extends BaseController
 				}
 
 				// Updating razerpay order id ,payment id ,paymentstatus to order tbl
-				$deliveryMsg = 1;
-				$deliveryStatus = 1;
+				$deliveryMsg = 2;
+				$deliveryStatus = 2;
 
 
 				$orderQry = "UPDATE tbl_orders SET razerpay_payment_id = ?,razerpay_order_id = ?,razerpay_signature = ?,order_status = ? ,delivery_message = ?,delivery_status = ?,payment_status = ?,payment_method = ? WHERE order_id = ?";
@@ -434,13 +432,13 @@ class RazerpayController extends BaseController
 			// Updating razerpay order id ,payment id ,paymentstatus 
 			$orderID = session()->get('order_id');
 			$deliveryMsg = "Your order is pending.";
-			$deliveryStatus = 2;
+			$deliveryStatus = 3;
 			$payment_status = 1;
 			$orderQry = "UPDATE tbl_orders SET razerpay_payment_id = ?,razerpay_order_id = ?,razerpay_signature = ?,order_status = ? ,
 						 delivery_message = ?,delivery_status = ?,payment_status = ? WHERE order_id = ?";
 			$updateData = $db->query($orderQry, [$razorpay_payment_id, $razorpay_order_id, $razorpay_signature, $Orderstatus, $deliveryMsg, $deliveryStatus, $payment_status, $orderID]);
 		}
-		
+
 
 	}
 

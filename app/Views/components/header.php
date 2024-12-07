@@ -976,25 +976,35 @@ video {
                     <i class="bx bx-chevron-right"></i>
                 </a>
                 <div class="submenu megamenu__text" id="shopby-brand">
-                    <?php for ($i = 0; $i < count($accessories); $i++) { ?>
+                    <?php
+
+
+                    for ($i = 0; $i < count($accessories); $i++) {
+                        ?>
                         <div class="submenu__inner">
                             <h4 class="submenu__title">
-                                <?php echo $accessories[$i]['access_title'] ?>
+                                <?php echo $accessories[$i]['access_title']; ?>
                             </h4>
-                            <?php for ($j = 0; $j < count($sub_accessories); $j++) {
-                                if ($sub_accessories[$j]['access_id'] === $accessories[$i]['access_id']) { ?>
+                            <?php
+                            for ($j = 0; $j < count($sub_accessories); $j++) {
+                                if ($sub_accessories[$j]['access_id'] === $accessories[$i]['access_id']) {
+                                    ?>
                                     <ul class="submenu__list">
                                         <li><a
-                                                href="<?php echo base_url() ?>motor-accessories/<?php echo strtolower(str_replace(' ', '-', $sub_accessories[$j]['sub_access_name'])) ?>/<?php echo base64_encode($sub_accessories[$j]['sub_access_id']) ?>">
-                                                <?php echo $sub_accessories[$j]['sub_access_name'] ?>
+                                                href="<?php echo base_url(); ?>motor-accessories/<?php echo strtolower(str_replace(' ', '-', $sub_accessories[$j]['sub_access_name'])); ?>/<?php echo base64_encode($sub_accessories[$j]['sub_access_id']); ?>">
+                                                <?php echo $sub_accessories[$j]['sub_access_name']; ?>
                                             </a></li>
                                     </ul>
-                                <?php } ?>
-                            <?php } ?>
+                                    <?php
+                                }
+                            }
+                            ?>
                         </div>
                         <?php
-                    }
-                    ?>
+                    } ?>
+
+
+
                 </div>
             </li>
             <li class="menu__item menu__dropdown auto_menu" id="menu__item">

@@ -292,6 +292,7 @@ $(document).ready(function () {
         $("#cancel-payid").val(viewOrder[0]["razerpay_payment_id"]);
         $("#cancel-orderid").val(viewOrder[0]["order_id"]);
         // Address
+        $("#user-name").html(viewOrder[0]["username"]);
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );

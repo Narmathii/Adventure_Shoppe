@@ -40,7 +40,7 @@ class OrderListController extends BaseController
             "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date ,  DATE_FORMAT(a.delivery_date, '%a, %d %b') AS deliverydate
             FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
-            WHERE a.flag = 1 AND b.flag = 1";
+            WHERE a.flag = 1 AND b.flag = 1 AND a.order_status <> 'initiated' AND  a.payment_status <> 'PENDING'";
         $orderDetail = $db->query($query)->getResultArray();
 
 
@@ -69,7 +69,7 @@ class OrderListController extends BaseController
             a.payment_status,a.delivery_status,a.cancel_reason,
             b.`quantity`, b.`prod_price`, b.`sub_total` AS product_price, 
             b.color,b.hex_code,b.size,b.config_image1,b.color_name,b.color_name,c.product_name,
-            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number
+            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username
                         FROM tbl_orders AS a 
                         LEFT JOIN tbl_order_item AS b ON a.order_id = b.order_id 
                         INNER JOIN $tableName AS c ON b.prod_id = c.prod_id
@@ -330,7 +330,7 @@ class OrderListController extends BaseController
             a.payment_status,a.delivery_status,a.cancel_reason,
             b.`quantity`, b.`prod_price`, b.`sub_total` AS product_price, 
             b.color,b.hex_code,b.size,b.config_image1,b.color_name,b.color_name,c.product_name,
-            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number
+            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username
                         FROM tbl_orders AS a 
                         LEFT JOIN tbl_order_item AS b ON a.order_id = b.order_id 
                         INNER JOIN $tableName AS c ON b.prod_id = c.prod_id
@@ -408,6 +408,7 @@ class OrderListController extends BaseController
         $query = "SELECT `sub_total`,`courier_charge`  FROM `tbl_orders` WHERE flag =1 AND `order_id` =  ?";
         $getData = $db->query($query, [$order_id])->getRow();
 
+
         $ToalAmt = $getData->sub_total;
         $courierCharge = $getData->courier_charge;
 
@@ -453,8 +454,10 @@ class OrderListController extends BaseController
             } else {
                 $response_data = json_decode($response, true);
 
+
+
                 if (isset($response_data['id']) && in_array($response_data['status'], ['created', 'processed'])) {
-                    $deliveryStatus = ($response_data['status'] == 'created') ? 6 : 7;
+                    $deliveryStatus = ($response_data['status'] == 'created') ? 7 : 8;
                     $deliveryMessage = $deliveryStatus;
                     $refundID = $response_data['id'];
 
@@ -496,9 +499,7 @@ class OrderListController extends BaseController
         try {
 
             $refund = $this->api->refund->fetch($refundID);
-            echo "<prE>";
-            print_r($refund);
-            die;
+
             return $refund;
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];

@@ -18,7 +18,13 @@ class Home extends BaseController
         $res['modal'] = $db->query('SELECT `modal_id` ,`brand_id`, CONCAT(UPPER(SUBSTRING(modal_name, 1, 1)), LOWER(SUBSTRING(modal_name, 2))) AS `modal_name` FROM `tbl_modal_master` WHERE  `flag` = 1 ORDER BY modal_name ASC ')->getResultArray();
 
         $res['accessories'] = $db->query('SELECT `access_id`, UPPER(`access_title`) AS `access_title`  FROM `tbl_access_master` WHERE `flag` = 1  ORDER BY  `access_title` ASC;')->getResultArray();
-        $res['sub_accessories'] = $db->query('SELECT `sub_access_id`,`access_id`, CONCAT(UPPER(SUBSTRING(`sub_access_name`, 1, 1)), LOWER(SUBSTRING(`sub_access_name`, 2))) AS `sub_access_name`  FROM `tbl_subaccess_master` WHERE `flag` = 1 ORDER BY sub_access_name ASC;')->getResultArray();
+        $res['sub_accessories'] = $db->query('SELECT `sub_access_id`, `access_id`, 
+       CONCAT(UPPER(SUBSTRING(`sub_access_name`, 1, 1)), LOWER(SUBSTRING(`sub_access_name`, 2))) AS `sub_access_name`  
+FROM `tbl_subaccess_master` 
+WHERE `flag` = 1 
+ORDER BY sub_access_name ASC
+')->getResultArray();
+
 
         $res['riding_menu'] = $db->query('SELECT `r_menu_id` , UPPER(`r_menu`) AS `r_menu`  FROM `tbl_riding_menu` WHERE `flag` =1 ORDER BY r_menu ASC;')->getResultArray();
         $res['riding_submenu'] = $db->query('SELECT `r_sub_id`,`r_menu_id`,CONCAT(UPPER(SUBSTRING(`r_sub_menu`, 1, 1)), LOWER(SUBSTRING(`r_sub_menu`, 2))) AS `r_sub_menu`  FROM `tbl_riding_submenu` WHERE flag =1 ORDER BY r_sub_menu ASC')->getResultArray();
@@ -824,8 +830,8 @@ AND `flag` = 1;
          WHERE b.r_sub_id = $subID AND b.flag= 1 
         LIMIT 12  OFFSET $dataLimit ")->getResultArray();
 
-    
-        
+
+
 
         echo json_encode($res);
 
@@ -1019,6 +1025,8 @@ AND `flag` = 1;
         $q1 = "SELECT DISTINCT * FROM `tbl_rproduct_list` WHERE `flag` = 1 AND `r_sub_id` = ?  AND `flag` = 1 AND prod_id <> ?";
         $res['similar'] = $db->query($q1, [$subMenu, $PRODID])->getResultArray();
         /* SIMILAR PRODUCTS NEW   END*/
+
+        
 
         return view('ridingDetails', $res);
     }
@@ -1611,7 +1619,7 @@ AND `flag` = 1;
 
 
         // Get Order Summary
-        $query = "SELECT * FROM `tbl_orders` WHERE `user_id` = ? AND `flag` = 1";
+        $query = "SELECT * FROM `tbl_orders` WHERE `user_id` = ? AND `flag` = 1 AND  order_status <> 'initiated'";
         $orderDetails = $db->query($query, [$userID])->getResultArray();
 
         $orderSummaries = [];
@@ -1693,9 +1701,6 @@ AND `flag` = 1;
 
         }
         $res['summary'] = $orderSummaries;
-
-
-
 
         return view('myorders', $res);
     }

@@ -9,11 +9,27 @@ class DashboardController extends BaseController
     public function shippingstatus()
     {
         $session = \Config\Services::session();
+        $db = \Config\Database::connect();
 
         if ($session->get('login_sts') == "") {
             return redirect()->to('admin');
         } else {
-            return view("admin/shippingstatus");
+            $query = "SHOW COLUMNS FROM tbl_orders LIKE 'delivery_status'";
+            $result = $db->query($query)->getRow();
+
+
+            if ($result) {
+                // Extract ENUM values from the Type field
+                preg_match("/^enum\((.*)\)$/", $result->Type, $matches);
+                if (!empty($matches[1])) {
+                    $enumValues = explode(",", str_replace("'", "", $matches[1]));
+                    // return $enumValues;
+                }
+            }
+
+            $res['delivery_sts'] = $enumValues;
+
+            return view("admin/shippingstatus", $res);
         }
 
     }
@@ -26,7 +42,7 @@ class DashboardController extends BaseController
 
             "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
-            WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 3";
+            WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 4";
         $orderDetail = $db->query($query)->getResultArray();
 
         echo json_encode($orderDetail);
@@ -35,11 +51,27 @@ class DashboardController extends BaseController
     public function deliverystatus()
     {
         $session = \Config\Services::session();
+        $db = \Config\Database::connect();
 
         if ($session->get('login_sts') == "") {
             return redirect()->to('admin');
         } else {
-            return view("admin/deliverystatus");
+            $query = "SHOW COLUMNS FROM tbl_orders LIKE 'delivery_status'";
+            $result = $db->query($query)->getRow();
+
+
+            if ($result) {
+                // Extract ENUM values from the Type field
+                preg_match("/^enum\((.*)\)$/", $result->Type, $matches);
+                if (!empty($matches[1])) {
+                    $enumValues = explode(",", str_replace("'", "", $matches[1]));
+                    // return $enumValues;
+                }
+            }
+
+            $res['delivery_sts'] = $enumValues;
+
+            return view("admin/deliverystatus", $res);
         }
 
 
@@ -53,7 +85,7 @@ class DashboardController extends BaseController
 
             "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
-            WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 4";
+            WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 5";
         $orderDetail = $db->query($query)->getResultArray();
 
 
@@ -101,8 +133,8 @@ class DashboardController extends BaseController
 
             "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
-            WHERE a.flag = 1 AND a.delivery_status =  2 AND b.flag = 1
-ORDER BY `order_date` ASC";
+            WHERE a.flag = 1 AND a.delivery_status =  3 AND b.flag = 1
+            ORDER BY `order_date` ASC";
         $orderDetail = $db->query($query)->getResultArray();
         echo json_encode($orderDetail);
     }
@@ -111,11 +143,27 @@ ORDER BY `order_date` ASC";
     public function pendingOrder()
     {
         $session = \Config\Services::session();
+        $db = \Config\Database::connect();
 
         if ($session->get('login_sts') == "") {
             return redirect()->to('admin');
         } else {
-            return view('admin/pendingorder');
+            $query = "SHOW COLUMNS FROM tbl_orders LIKE 'delivery_status'";
+            $result = $db->query($query)->getRow();
+
+
+            if ($result) {
+                // Extract ENUM values from the Type field
+                preg_match("/^enum\((.*)\)$/", $result->Type, $matches);
+                if (!empty($matches[1])) {
+                    $enumValues = explode(",", str_replace("'", "", $matches[1]));
+                    // return $enumValues;
+                }
+            }
+
+            $res['delivery_sts'] = $enumValues;
+
+            return view('admin/pendingorder', $res);
         }
 
 
@@ -133,6 +181,20 @@ ORDER BY `order_date` ASC";
         if ($session->get('login_sts') == "") {
             return redirect()->to('admin');
         } else {
+            $query = "SHOW COLUMNS FROM tbl_orders LIKE 'delivery_status'";
+            $result = $db->query($query)->getRow();
+
+
+            if ($result) {
+                // Extract ENUM values from the Type field
+                preg_match("/^enum\((.*)\)$/", $result->Type, $matches);
+                if (!empty($matches[1])) {
+                    $enumValues = explode(",", str_replace("'", "", $matches[1]));
+                    // return $enumValues;
+                }
+            }
+
+            $res['delivery_sts'] = $enumValues;
             return view('admin/canceledOrder', $res);
         }
 
@@ -153,7 +215,7 @@ ORDER BY `order_date` ASC";
         ON
             a.`user_id` = b.user_id
         WHERE
-            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 5 
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
         ORDER BY
             `order_date` ASC";
         $CancelOrders = $db->query($query)->getResultArray();
@@ -174,6 +236,21 @@ ORDER BY `order_date` ASC";
         if ($session->get('login_sts') == "") {
             return redirect()->to('admin');
         } else {
+
+            $query = "SHOW COLUMNS FROM tbl_orders LIKE 'delivery_status'";
+            $result = $db->query($query)->getRow();
+
+
+            if ($result) {
+                // Extract ENUM values from the Type field
+                preg_match("/^enum\((.*)\)$/", $result->Type, $matches);
+                if (!empty($matches[1])) {
+                    $enumValues = explode(",", str_replace("'", "", $matches[1]));
+                    // return $enumValues;
+                }
+            }
+
+            $res['delivery_sts'] = $enumValues;
             return view('admin/refundDetails', $res);
         }
 
@@ -193,7 +270,7 @@ ORDER BY `order_date` ASC";
         ON
             a.`user_id` = b.user_id
         WHERE
-            a.flag = 1 AND  b.flag = 1 AND `cancel_status` =  1 AND (a.delivery_status = 6  OR a.delivery_status = 7 OR a.delivery_status = 8)
+            a.flag = 1 AND  b.flag = 1  AND (a.delivery_status = 7  OR a.delivery_status = 8 OR a.delivery_status = 9)
         ORDER BY
             `order_date` ASC";
         $CancelOrders = $db->query($query)->getResultArray();

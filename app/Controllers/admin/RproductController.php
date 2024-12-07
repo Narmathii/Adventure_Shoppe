@@ -221,22 +221,12 @@ class RproductController extends BaseController
     {
         $db = \Config\Database::connect();
 
-        $query =
-            "SELECT
+
+        $q1 = 'SELECT
     a.r_menu,
-    d.prod_id AS `configid`,
     b.*,
-    c.r_sub_menu,
-    d.`config_id`,
-    d.`tbl_name`,
-    d.`colour`,
-    d.`size`,
-    d.`soldout_status`,
-    d.`config_img1`,
-    d.`config_img2`,
-    d.`config_img3`,
-    d.`config_img4`
-FROM
+    c.r_sub_menu
+    FROM
     tbl_riding_menu AS a
 INNER JOIN tbl_rproduct_list AS b
 ON
@@ -244,17 +234,55 @@ ON
 INNER JOIN tbl_riding_submenu AS c
 ON
     c.r_sub_id = b.r_sub_id
-LEFT JOIN tbl_configuration AS d
-ON
-    (d.prod_id = b.prod_id)
-WHERE
+    WHERE
     b.flag = 1
 ORDER BY
-    r_menu ASC;";
+    r_menu ASC;';
 
 
-        $res = $db->query($query)->getResultArray();
-        echo json_encode($res);
+        $prodData = $db->query($q1)->getResultArray();
+        for ($i = 0; $i < count($prodData); $i++) {
+            $table_name = $prodData[$i]['tbl_name'];
+
+
+            $prodID = $prodData[$i]['prod_id'];
+
+            $q2 = 'SELECT DISTINCT
+                prod_id AS configid, 
+                config_id,  
+                size, 
+                soldout_status,
+                config_img1,
+                config_img2,
+                config_img3,
+                config_img4 
+                FROM tbl_configuration 
+                WHERE prod_id = ? 
+                AND tbl_name = ?';
+
+            $getConfigRes = $db->query($q2, [$prodID, $table_name])->getResultArray();
+
+            if (empty($getConfigRes)) {
+                // If configuration is empty, set default values
+                $getConfigRes[] = [
+                    'configid' => '',
+                    'config_id' => '',
+                    'size' => '',
+                    'soldout_status' => '',
+                    'config_img1' => '',
+                    'config_img2' => '',
+                    'config_img3' => '',
+                    'config_img4' => '',
+                ];
+            }
+
+            // Merge the first configuration record with the product data
+            $prodData[$i] = array_merge($prodData[$i], $getConfigRes[0]);
+        }
+
+
+
+        echo json_encode($prodData);
     }
 
 

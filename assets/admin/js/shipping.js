@@ -300,6 +300,7 @@ $(document).ready(function () {
         let sizee = viewOrder.length;
 
         // Address
+        $("#user-name").html(viewOrder[0]["username"]);
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );
