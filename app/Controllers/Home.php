@@ -392,6 +392,7 @@ GROUP BY `product_id` HAVING SUM(`prod_count`)<=10";
         $modalID = base64_decode($segID);
 
 
+
         $segment = ucwords(str_replace('-', ' ', $segName));
 
         $db = \Config\Database::connect();
@@ -402,6 +403,7 @@ GROUP BY `product_id` HAVING SUM(`prod_count`)<=10";
         WHERE FIND_IN_SET('$modalID', `modal_name`) > 0 
         AND `flag` = 1")
             ->getResultArray();
+
 
         $product = [];
 
@@ -1026,7 +1028,7 @@ AND `flag` = 1;
         $res['similar'] = $db->query($q1, [$subMenu, $PRODID])->getResultArray();
         /* SIMILAR PRODUCTS NEW   END*/
 
-        
+
 
         return view('ridingDetails', $res);
     }

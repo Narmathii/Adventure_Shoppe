@@ -72,7 +72,7 @@ class CartController extends BaseController
 
 
             $query = "SELECT a.prod_id, a.product_name, a.product_price, a.offer_price, a.product_img,a.quantity AS total_stock,
-                             b.quantity, b.cart_id, b.user_id, b.table_name, b.sub_total, b.size,b.config_image1
+                             b.quantity, b.cart_id, b.user_id, b.table_name, b.sub_total, b.size,b.config_image1,b.size_stock
                             
                       FROM $tableName AS a 
                       INNER JOIN tbl_user_cart AS b ON a.prod_id = b.prod_id
@@ -86,12 +86,6 @@ class CartController extends BaseController
         }
 
         $res['cart_product'] = $data;
-
-
-        // echo "<pre>";
-        // print_r($res['cart_product']);
-        // die;
-
 
         // GET ADDRESS DETAILS 
         $addressQry = "SELECT  a.* , b.state_title , c.dist_name,d.number,d.username FROM
@@ -145,6 +139,7 @@ class CartController extends BaseController
         $this->session = \Config\Services::session();
         $data = $this->request->getPost();
 
+    
         $tblName = $this->request->getPost('table_name');
         $prodID = $this->request->getPost('prod_id');
         $qty = $this->request->getPost('quantity');
@@ -152,6 +147,9 @@ class CartController extends BaseController
         $configImage = $this->request->getPost('config_image1');
         $size = $this->request->getPost('size');
         $userID = $this->session->get('user_id');
+        $size_Stock = $this->request->getPost('size_stock');
+
+
 
         if ($size == "") {
             $hexCode = 0;
@@ -221,7 +219,8 @@ class CartController extends BaseController
                 'color' => 0,
                 'hex_code' => 0,
                 'size' => $size,
-                'config_image1' => $configImage
+                'config_image1' => $configImage,
+                'size_stock' => $size_Stock
 
 
             ];

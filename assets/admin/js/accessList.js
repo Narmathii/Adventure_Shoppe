@@ -83,7 +83,7 @@ $(document).ready(function () {
       selectedBrands = selectedBrands.filter((id) => id !== brand_id);
     }
 
-    if (mode == "new" && brand_id != 0) {
+    if (mode == "new" && brand_id != 0 && brand_id != -1) {
       if (selectedBrands.length > 0) {
         $.ajax({
           type: "POST",
@@ -115,11 +115,16 @@ $(document).ready(function () {
           },
         });
       } else {
-        $("#modal-container").html("No Selected Models*");
+        // $("#modal-container").html("No Selected Models*");
+        $("#modal-container")
+          .html(`<input class="form-check-input" type="checkbox" id="modal_-1" 
+          value="-1" name="modal_name[]" checked>
+          <label class="form-check-label" for="modal_-1">
+              No Selected modal
+          </label>`);
       }
-    } else if (mode == "edit" && brand_id != 0) {
+    } else if (mode == "edit" && brand_id != 0 && brand_id != -1) {
       if (brandID != null) {
-        console.log("edit 1");
         let selectedBrandIDs = brandID.split(",");
         for (let x = 0; x < selectedBrandIDs.length; x++) {
           if (!selectedBrands.includes(selectedBrandIDs[x])) {
@@ -183,7 +188,12 @@ $(document).ready(function () {
             },
           });
         } else {
-          $("#modal-container").html("No Selected Models");
+          $("#modal-container")
+            .html(`<input class="form-check-input" type="checkbox" id="modal_-1" 
+          value="-1" name="modal_name[]">
+          <label class="form-check-label" for="modal_-1">
+              No Selected modal
+          </label>`);
         }
       } else {
         if (selectedBrands.length > 0) {
@@ -217,7 +227,12 @@ $(document).ready(function () {
             },
           });
         } else {
-          $("#modal-container").html("No Selected Models");
+          $("#modal-container")
+            .html(`<input class="form-check-input" type="checkbox-" id="modal_" 
+          value=" " name="modal_name[]">
+          <label class="form-check-label" for="modal_">
+              No Selected modal
+          </label>`);
         }
       }
     } else {
@@ -230,6 +245,23 @@ $(document).ready(function () {
               value="0" name="modal_name[]" checked>
               <label class="form-check-label" for="modal_0">
                   All Models
+              </label>`);
+      }
+
+      if (mode == "new" && brand_id == -1 && isChecked) {
+        $("#modal-container")
+          .html(`<input class="form-check-input" type="checkbox" id="modal_-1" 
+              value="-1" name="modal_name[]" checked>
+              <label class="form-check-label" for="modal_-1">
+                  No Selected Modals
+              </label>`);
+      }
+      if (mode == "edit" && brand_id == -1 && isChecked) {
+        $("#modal-container")
+          .html(`<input class="form-check-input" type="checkbox" id="modal_-1" 
+              value="-1" name="modal_name[]" checked>
+              <label class="form-check-label" for="modal_-1">
+                  No Selected Modals
               </label>`);
       } else {
         $("#modal-container")
@@ -890,6 +922,7 @@ $(document).ready(function () {
     $("#model-data").modal("show");
     mode = "edit";
     var index = $(this).attr("id");
+    console.log(res_DATA[index]);
 
     // Only for Brands and Models
     brandID = res_DATA[index].commonbrand_id;
@@ -914,29 +947,22 @@ $(document).ready(function () {
     $("#specifications").val(res_DATA[index].specifications);
     specificationss.setData(res_DATA[index].specifications);
 
-    $("#img5_url").attr("src", base_Url + res_DATA[index].img_5);
-    $("#img5_url").addClass("active");
-    $("#img5_url").css("display", "block");
+    let x;
+    for (x = 1; x <= 10; x++) {
+      if (res_DATA[index][`img_${x}`] != "") {
+        $("#img" + x + "_url").attr(
+          "src",
+          base_Url + res_DATA[index][`img_${x}`]
+        );
+        $("#img" + x + "_url").addClass("active");
+        $("#img" + x + "_url").css("display", "block");
+      } else {
+        $("#img" + x + "_url").attr("src", res_DATA[index][`img_${x}`]);
+        // $("#img" + x + "_url").addClass("active");
+        $("#img" + x + "_url").css("display", "none");
+      }
+    }
 
-    $("#img6_url").attr("src", base_Url + res_DATA[index].img_6);
-    $("#img6_url").addClass("active");
-    $("#img6_url").css("display", "block");
-
-    $("#img7_url").attr("src", base_Url + res_DATA[index].img_7);
-    $("#img7_url").addClass("active");
-    $("#img7_url").css("display", "block");
-
-    $("#img8_url").attr("src", base_Url + res_DATA[index].img_8);
-    $("#img8_url").addClass("active");
-    $("#img8_url").css("display", "block");
-
-    $("#img9_url").attr("src", base_Url + res_DATA[index].img_9);
-    $("#img9_url").addClass("active");
-    $("#img9_url").css("display", "block");
-
-    $("#img10_url").attr("src", base_Url + res_DATA[index].img_10);
-    $("#img10_url").addClass("active");
-    $("#img10_url").css("display", "block");
     // new data End
 
     var accessId = res_DATA[index].access_id;
@@ -983,22 +1009,6 @@ $(document).ready(function () {
     $("#product_image_url").css("display", "block");
     // images
 
-    $("#img1_url").attr("src", base_Url + res_DATA[index].img_1);
-    $("#img1_url").addClass("active");
-    $("#img1_url").css("display", "block");
-
-    $("#img2_url").attr("src", base_Url + res_DATA[index].img_2);
-    $("#img2_url").addClass("active");
-    $("#img2_url").css("display", "block");
-
-    $("#img3_url").attr("src", base_Url + res_DATA[index].img_3);
-    $("#img3_url").addClass("active");
-    $("#img3_url").css("display", "block");
-
-    $("#img4_url").attr("src", base_Url + res_DATA[index].img_4);
-    $("#img4_url").addClass("active");
-    $("#img4_url").css("display", "block");
-
     $("#prod_desc").val(res_DATA[index].prod_desc);
     prodDesc.setData(res_DATA[index].prod_desc);
 
@@ -1037,6 +1047,14 @@ $(document).ready(function () {
       dataType: "json",
       success: function (res) {
         $("#brand-container").empty();
+        $("#brand-container").append(`
+          <div class="form-check me-3" style="width: auto;">
+              <input class="form-check-input brand-checkbox" name="brand_name[]"
+                     type="checkbox" id="brand_id_-1" value="-1"
+                     ${selectedBrandIDs.includes("-1") ? "checked" : ""}>
+              <label class="form-check-label" for="brand_id_-1">No Selected Brands</label>
+          </div>
+      `);
         $("#brand-container").append(`
           <div class="form-check me-3" style="width: auto;">
               <input class="form-check-input brand-checkbox" name="brand_name[]"
@@ -1080,6 +1098,14 @@ $(document).ready(function () {
       dataType: "json",
       success: function (res) {
         $("#modal-container").empty();
+        $("#modal-container").append(`
+          <div class="form-check me-3" style="width: auto;">
+              <input class="form-check-input" name="modal_name[]"
+                     type="checkbox" id="modal_id_-1" value="-1"
+                     ${selectedModalIDs.includes("-1") ? "checked" : ""}>
+              <label class="form-check-label" for="modal_id_-1">No Selected Modals</label>
+          </div>
+      `);
         $("#modal-container").append(`
           <div class="form-check me-3" style="width: auto;">
               <input class="form-check-input" name="modal_name[]"

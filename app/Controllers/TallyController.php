@@ -50,7 +50,6 @@ class TallyController extends ResourceController
                 }
 
             } else {
-
                 return $this->respond(['message' => 'No pending data found for syncing.'], 200);
             }
 
@@ -84,11 +83,14 @@ class TallyController extends ResourceController
                 'tbl_camping_products'
             ];
 
+
             $res = []; // Initialize the response array
 
             foreach ($jsonData as $item) {
                 if (isset($item['item_name'], $item['quantity'])) {
                     $prodName = $item['item_name'];
+
+
                     $Tallystock = intval($item['quantity']);
                     $updateProd = null;
 
@@ -104,7 +106,10 @@ class TallyController extends ResourceController
                             $updateProd = $result;
                             break;
                         }
+
                     }
+
+
 
                     if ($updateProd) {
                         // Update the product if found
@@ -115,7 +120,7 @@ class TallyController extends ResourceController
                             $updateQuery = "UPDATE $tableName SET quantity = ? WHERE product_name = ?";
                             $db->query($updateQuery, [$Tallystock, $prodName]);
 
-                            $res['code'] = 400;
+                            $res['code'] = 200;
                             $res['status'] = 'Success';
                             $res['message'] = 'Quantity updated successfully.';
 
@@ -129,7 +134,6 @@ class TallyController extends ResourceController
 
                         if (empty($size)) {
 
-
                             $res['code'] = 400;
                             $res['status'] = 'Failure';
                             $res['message'] = 'Size not detected in product name.';
@@ -140,21 +144,35 @@ class TallyController extends ResourceController
                         // Continue processing sizes...
                         $final_size = preg_replace('/-+/', ' ', $size);
                         $productName = preg_replace($sizePattern, '', $prodName);
+
                         $final_prodname = trim(preg_replace('/-+/', '-', $productName), '- ');
+
+
 
                         if ($final_prodname != '' && $final_size != '') {
                             foreach ($table_names as $table) {
-                                $query = $db->query(
+                                $query_res = $db->query(
                                     "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
                                     [$final_prodname]
-                                );
-                                $result = $query->getRow();
+                                )->getRow();
 
-                                if ($result && $result->count > 0) {
-                                    $getconfig_data = $result;
+
+                                if ($query_res && $query_res->count > 0) {
+                                    $getconfig_data = $query_res;
                                     break;
                                 }
                             }
+
+
+
+                            $Config_prodid = $getconfig_data->prod_id;
+                            $Config_tblname = $getconfig_data->tbl_name;
+
+                            $configqry = "SELECT * FROM `tbl_configuration` WHERE `prod_id` = ? AND tbl_name = ? AND `flag` = 1;";
+                            $getRes = $db->query($configqry, [$Config_prodid, $Config_tblname])->getRow();
+
+
+                            print_r($getRes);
 
                             // Handle configuration update...
                             // Add results to $res here

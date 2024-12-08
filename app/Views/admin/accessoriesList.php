@@ -161,6 +161,14 @@
                                 <div class="col-lg-12">
                                     <label for="brand_id" class="form-label">Brand Name</label><br>
                                     <div id="brand-container" class="d-flex flex-wrap">
+                                        <!-- "No Brands" Checkbox:: -->
+                                        <div class="form-check me-3" style="width: auto;">
+                                            <input class="form-check-input brand-checkbox" name="brand_name[]"
+                                                type="checkbox" id="brand_id_-1" value="-1">
+                                            <label class="form-check-label" for="brand_id_-1">
+                                                No Selected Brands
+                                            </label>
+                                        </div>
                                         <!-- "All Brands" Checkbox:: -->
                                         <div class="form-check me-3" style="width: auto;">
                                             <input class="form-check-input brand-checkbox" name="brand_name[]"

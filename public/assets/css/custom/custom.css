@@ -1,6 +1,9 @@
 /* body {
   font-family: "poppins";
 } */
+ .block-with-text > span >ul>li{
+   color :#000 !important
+ }
 a {
   color: #fff;
 }

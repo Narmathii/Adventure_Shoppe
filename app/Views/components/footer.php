@@ -23,7 +23,7 @@
                             Rd,<span class="footer_address"> Coimbatore - 641018, Tamil Nadu , India</span></span>
                         <span><i class="id-color fa fa-phone fa-lg"></i>+91-7358992528</span>
                         <span><i class="id-color fa fa-envelope-o fa-lg"></i>
-                            <a href="mailto:contact@example.com">abhishek@adventureshoppe.com</a></span>
+                            <a href="mailto:abhishek@adventureshoppe.com">abhishek@adventureshoppe.com</a></span>
                     </address>
                 </div>
             </div>

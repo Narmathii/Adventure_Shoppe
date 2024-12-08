@@ -592,29 +592,22 @@ $(document).ready(function () {
     $("#specifications").val(res_DATA[index].specifications);
     specificationss.setData(res_DATA[index].specifications);
 
-    $("#img5_url").attr("src", base_Url + res_DATA[index].img_5);
-    $("#img5_url").addClass("active");
-    $("#img5_url").css("display", "block");
+    let x;
+    for (x = 1; x <= 10; x++) {
+      if (res_DATA[index][`img_${x}`] != "") {
+        $("#img" + x + "_url").attr(
+          "src",
+          base_Url + res_DATA[index][`img_${x}`]
+        );
+        $("#img" + x + "_url").addClass("active");
+        $("#img" + x + "_url").css("display", "block");
+      } else {
+        $("#img" + x + "_url").attr("src", res_DATA[index][`img_${x}`]);
+        // $("#img" + x + "_url").addClass("active");
+        $("#img" + x + "_url").css("display", "none");
+      }
+    }
 
-    $("#img6_url").attr("src", base_Url + res_DATA[index].img_6);
-    $("#img6_url").addClass("active");
-    $("#img6_url").css("display", "block");
-
-    $("#img7_url").attr("src", base_Url + res_DATA[index].img_7);
-    $("#img7_url").addClass("active");
-    $("#img7_url").css("display", "block");
-
-    $("#img8_url").attr("src", base_Url + res_DATA[index].img_8);
-    $("#img8_url").addClass("active");
-    $("#img8_url").css("display", "block");
-
-    $("#img9_url").attr("src", base_Url + res_DATA[index].img_9);
-    $("#img9_url").addClass("active");
-    $("#img9_url").css("display", "block");
-
-    $("#img10_url").attr("src", base_Url + res_DATA[index].img_10);
-    $("#img10_url").addClass("active");
-    $("#img10_url").css("display", "block");
     // new data End
 
     $("#billing_name").val(res_DATA[index].billing_name);
@@ -650,22 +643,6 @@ $(document).ready(function () {
     $("#product_image_url").addClass("active");
     $("#product_image_url").css("display", "block");
     // images
-
-    $("#img1_url").attr("src", base_Url + res_DATA[index].img_1);
-    $("#img1_url").addClass("active");
-    $("#img1_url").css("display", "block");
-
-    $("#img2_url").attr("src", base_Url + res_DATA[index].img_2);
-    $("#img2_url").addClass("active");
-    $("#img2_url").css("display", "block");
-
-    $("#img3_url").attr("src", base_Url + res_DATA[index].img_3);
-    $("#img3_url").addClass("active");
-    $("#img3_url").css("display", "block");
-
-    $("#img4_url").attr("src", base_Url + res_DATA[index].img_4);
-    $("#img4_url").addClass("active");
-    $("#img4_url").css("display", "block");
 
     $("#prod_desc").val(res_DATA[index].prod_desc);
     prodDesc.setData(res_DATA[index].prod_desc);

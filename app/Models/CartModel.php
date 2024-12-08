@@ -19,7 +19,8 @@ class CartModel extends Model
         'color',
         'hex_code',
         'size',
-        'config_image1'
+        'config_image1',
+        'size_stock'
 
     ];
 }

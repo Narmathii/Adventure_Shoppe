@@ -189,13 +189,13 @@
                                             value="<?=  $tour_detail['product_img']?>" />
                                         <!-- <input type="hidden" name="color" id="color_val"
                                             value="<?php echo $tour_detail['color'][0] ?>" /> -->
-                                        <input type="hidden" name="size" id=""
+                                            <input type="hidden" name="size" id=""
                                             value="<?php echo $tour_detail['size'][0] ?>" />
-
+                                            
                                             <div class='window d-flex'>
                                                     <?php
                                                     $size = $tour_detail['size'];
-
+                                                    $stock = $tour_detail['stock'];
                                                     if ($size[0] != "") {
                                                         $count = count($size);
 
@@ -204,9 +204,9 @@
                                                                 <p>Size:</p>
 
                                                                 <select class='range-picker size-details' name="size"
-                                                                    id="size-<?php echo $i ?>">
+                                                                    id="size-<?php echo $i ?>" >
                                                                     <?php for ($i = 0; $i < $count; $i++) { ?>
-                                                                        <option value="<?php echo $size[$i] ?>"><?php echo $size[$i] ?></option>
+                                                                        <option value="<?php echo $size[$i] ?>" data-sizestock ="<?php echo $stock[$i] ?>"><?php echo $size[$i] ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -298,12 +298,37 @@
                                     <input type="hidden" name="prod_price" id="prod_price"
                                         value="<?php echo $tour_detail['offer_price'] ?>" />
 
+                                        <input type="hidden" name="size_stock" id="size_stock"
+                                         value="" >
+
+                                           <!-- Stock based on Size -->
+                                    <?php
+                                    $ConfigSize = $tour_detail['size'];
+                                    if (!empty($ConfigSize) && is_array($ConfigSize)) {
+                                        $countSize = count($ConfigSize);
+                                    
+                                        // Additional check if the first element is empty
+                                        if ($countSize > 0 && ($ConfigSize[0] === "" || $ConfigSize[0] === null)) {
+                                            $countSize = 0; 
+                                        }
+                                       
+                                    } else {
+                                        $countSize =0;
+                                    }
+                                    ?>
+
+                                    <!-- For Quantity Update -->
+                                    <input type="hidden" class="main-stock" value="<?= $tour_detail['quantity'] ?>" data-sizeval="<?= $countSize ?>">
+                                            
+
+                                    
+
                                     <div class="addto_cart ">
                                         <div class="col-lg-12 btn-detail">
                                             <div class="col-lg-4 ">
                                                 <div class="number">
                                                     <span class="minus">-</span>
-                                                    <input id="quantity" name="quantity" type="text" value="1" stock-qty="<?=$tour_detail['quantity'] ?>"
+                                                    <input id="quantity" name="quantity" type="text" value="1" stock-qty=""
                                                         placeholder="1" />
                                                     <span class="plus">+</span>
                                                 </div>
@@ -791,6 +816,45 @@
     <!-- content close -->
     <a href="#" id="back-to-top"></a>
     <?php require("components/footer.php"); ?>
+
+    <script>
+     
+     let main_stock = $(".main-stock").val();
+    
+     let sizecount =  $(".main-stock").data('sizeval');
+     let initialSize = "";
+     let sizeStock = "" ;
+
+     function updateQuantity(stock) {
+         $("#quantity").val(1); 
+         $("#quantity").attr('stock-qty', stock);
+         $("#size_stock").val(stock);
+     }
+
+     // Initial stock update based on size count
+     if (sizecount <= 0) {
+         $("#quantity").attr('stock-qty', main_stock);
+         $("#size_stock").val(0);
+     } else {
+         sizeStock = $(".size-details option:selected").data("sizestock");
+         updateQuantity(sizeStock);
+     }
+
+     // Event listener for size dropdown change
+     $(".size-details").on("change", function () {
+         let selectedSizeStock = $("option:selected", this).data("sizestock");
+
+         if (selectedSizeStock !== undefined) {
+             updateQuantity(selectedSizeStock);
+         } else {
+             $("#quantity").attr('stock-qty', main_stock);
+             $("#size_stock").val(0);
+         }
+     });
+ 
+
+</script>
+
 
     <script>
 

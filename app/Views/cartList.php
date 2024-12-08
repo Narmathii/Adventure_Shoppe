@@ -424,6 +424,15 @@ require("components/head.php");
 
                               <!-- CSRF Token -->
 
+                              <?php
+                              $size_stock = $cart_product[$i]->size_stock;
+                              if ($size_stock != 0) {
+                                $final_stock = $size_stock;
+                              } else {
+                                $final_stock = $cart_product[$i]->total_stock;
+                              }
+                              ?>
+
                               <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                               <div class="d-flex mb-4 " style="max-width: 300px">
                                 <button type="button" class="btn px-3 me-2 ripple-surface btn-decrement"
@@ -439,7 +448,7 @@ require("components/head.php");
 
                                 <button type="button" class="btn ripple-surface px-3 ms-2 btn-increment"
                                   cart_id_data="<?php echo $cart_product[$i]->cart_id ?>"
-                                  data-stock="<?php echo $cart_product[$i]->total_stock ?>">
+                                  data-stock="<?php echo $final_stock ?>">
                                   <i class="icon_plus_alt2"></i>
                                 </button>
                               </div>
