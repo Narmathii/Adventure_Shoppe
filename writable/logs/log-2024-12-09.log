@@ -1,0 +1,69 @@
+CRITICAL - 2024-12-09 05:30:15 --> Error: Cannot use [] for reading
+in APPPATH\Controllers\TallyController.php on line 196.
+ 1 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\TallyController->syncTallyData()
+ 2 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\TallyController))
+ 3 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 05:30:22 --> Error: Cannot use [] for reading
+in APPPATH\Controllers\TallyController.php on line 196.
+ 1 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\TallyController->syncTallyData()
+ 2 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\TallyController))
+ 3 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 05:31:38 --> Error: Cannot use [] for reading
+in APPPATH\Controllers\TallyController.php on line 199.
+ 1 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\TallyController->syncTallyData()
+ 2 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\TallyController))
+ 3 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 05:31:52 --> Error: Cannot use [] for reading
+in APPPATH\Controllers\TallyController.php on line 199.
+ 1 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\TallyController->syncTallyData()
+ 2 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\TallyController))
+ 3 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 16:21:05 --> ErrorException: array_merge(): Expected parameter 1 to be an array, null given
+in APPPATH\Controllers\Home.php on line 665.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'array_merge(): Expected parameter 1 to be an array, null given', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\Home.php', 665, [...])
+ 2 APPPATH\Controllers\Home.php(665): array_merge(null, [...])
+ 3 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\Home->accessoriesDetail('hr-h', 'hr-h')
+ 4 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-12-09 16:39:08 --> mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND flag = 1' at line 1 in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(306): mysqli->query('SELECT `access_...', 0)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `access_...')
+#2 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `access_...')
+#3 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\admin\SubAccessController.php(86): CodeIgniter\Database\BaseConnection->query('SELECT `access_...', Array)
+#4 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\admin\SubAccessController->updateSubAccessories()
+#5 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\SubAccessController))
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#8 {main}
+CRITICAL - 2024-12-09 16:39:08 --> CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND flag = 1' at line 1
+in SYSTEMPATH\Database\BaseConnection.php on line 647.
+ 1 APPPATH\Controllers\admin\SubAccessController.php(86): CodeIgniter\Database\BaseConnection->query('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = ? AND AND flag = 1', [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\SubAccessController->updateSubAccessories()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\SubAccessController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 16:39:08 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND flag = 1' at line 1
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 311.
+ 1 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = \'121\' AND AND flag = 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = \'121\' AND AND flag = 1')
+ 3 APPPATH\Controllers\admin\SubAccessController.php(86): CodeIgniter\Database\BaseConnection->query('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = ? AND AND flag = 1', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\SubAccessController->updateSubAccessories()
+ 5 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\SubAccessController))
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-09 16:39:08 --> [Caused by] mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND flag = 1' at line 1
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 306.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(306): mysqli->query('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = \'121\' AND AND flag = 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = \'121\' AND AND flag = 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = \'121\' AND AND flag = 1')
+ 4 APPPATH\Controllers\admin\SubAccessController.php(86): CodeIgniter\Database\BaseConnection->query('SELECT `access_id` ,`sub_access_id`  FROM `tbl_subaccess_master` WHERE `sub_access_id`  = ? AND AND flag = 1', [...])
+ 5 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\SubAccessController->updateSubAccessories()
+ 6 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\SubAccessController))
+ 7 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()

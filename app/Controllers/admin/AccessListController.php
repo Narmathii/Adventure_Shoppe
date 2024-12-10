@@ -46,6 +46,8 @@ class AccessListController extends BaseController
         $data = $this->request->getpost();
 
 
+
+
         $data['tbl_name'] = "tbl_accessories_list";
 
 
@@ -229,6 +231,8 @@ class AccessListController extends BaseController
 
         $res = $db->query($query)->getResultArray();
 
+
+
         // Loop to process modal names
         for ($i = 0; $i < count($res); $i++) {
             if ($res[$i]['commonmodal_id'] != "") {
@@ -300,6 +304,8 @@ class AccessListController extends BaseController
         $commonModel = new CommonAccessModel;
 
         $data = $this->request->getPost();
+
+
 
         $accessId = $this->request->getPost('prod_id');
         $configId = $this->request->getPost('config_id');
@@ -420,7 +426,13 @@ class AccessListController extends BaseController
             $Img10->move($filePath10, $img10);
 
             $data['img_10'] = $filePath10 . $img10;
+
         }
+
+        // echo "<pre>";
+        // print_r($data);
+        // die;
+
 
         $accessmodal = new AccessListModal;
         $updateRes = $accessmodal->update($accessId, $data);

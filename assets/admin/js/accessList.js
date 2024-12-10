@@ -922,7 +922,7 @@ $(document).ready(function () {
     $("#model-data").modal("show");
     mode = "edit";
     var index = $(this).attr("id");
-    console.log(res_DATA[index]);
+    // console.log(res_DATA[index]);
 
     // Only for Brands and Models
     brandID = res_DATA[index].commonbrand_id;
@@ -949,17 +949,16 @@ $(document).ready(function () {
 
     let x;
     for (x = 1; x <= 10; x++) {
-      if (res_DATA[index][`img_${x}`] != "") {
-        $("#img" + x + "_url").attr(
-          "src",
-          base_Url + res_DATA[index][`img_${x}`]
-        );
+      let imgValue = res_DATA[index][`img_${x}`]?.trim() || "";
+
+      if (!imgValue) {
+        $("#img" + x + "_url").attr("src", "");
+        $("#img" + x + "_url").removeClass("active");
+        $("#img" + x + "_url").css("display", "none");
+      } else {
+        $("#img" + x + "_url").attr("src", base_Url + imgValue);
         $("#img" + x + "_url").addClass("active");
         $("#img" + x + "_url").css("display", "block");
-      } else {
-        $("#img" + x + "_url").attr("src", res_DATA[index][`img_${x}`]);
-        // $("#img" + x + "_url").addClass("active");
-        $("#img" + x + "_url").css("display", "none");
       }
     }
 

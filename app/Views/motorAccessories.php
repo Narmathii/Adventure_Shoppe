@@ -393,7 +393,7 @@ require("components/head.php");
                     }
                     var available = get_filter('available');
                     var brand = get_filter('brand');
-                    console.log(brand);
+                   
                     var orderby = $('.orderby').val();
                     var tablename = 'tbl_accessories_list';
                     var submenu_id = $('.submenuid').val();

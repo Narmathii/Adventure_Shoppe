@@ -84,7 +84,7 @@ class TallyController extends ResourceController
             ];
 
 
-            $res = []; // Initialize the response array
+            $res = [];
 
             foreach ($jsonData as $item) {
                 if (isset($item['item_name'], $item['quantity'])) {
@@ -92,12 +92,12 @@ class TallyController extends ResourceController
 
 
                     $Tallystock = intval($item['quantity']);
-                    $updateProd = null;
+                    $updateProd = "";
 
                     // Search for product in all tables
                     foreach ($table_names as $table) {
                         $query = $db->query(
-                            "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
+                            "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE billing_name = ?",
                             [$prodName]
                         );
                         $result = $query->getRow();
@@ -117,16 +117,20 @@ class TallyController extends ResourceController
                         $tableName = $updateProd->tbl_name;
 
                         if ($productID != '' && $tableName != '') {
-                            $updateQuery = "UPDATE $tableName SET quantity = ? WHERE product_name = ?";
+                            $updateQuery = "UPDATE $tableName SET quantity = ? WHERE billing_name = ?";
                             $db->query($updateQuery, [$Tallystock, $prodName]);
 
                             $res['code'] = 200;
                             $res['status'] = 'Success';
-                            $res['message'] = 'Quantity updated successfully.';
+                            $res['message'] = 'Stock updated successfully.';
 
 
+                        } else {
+                            $res['code'] = 400;
+                            $res['status'] = 'Failure';
+                            $res['message'] = 'Stock updated Failed';
                         }
-                    } else {
+                    } else if ($prodName) {
                         // Handle products with sizes
                         $sizePattern = '/(?:^|[\s\-])(?:XS|S|M|L|XL|XXL|XXXL|4XL|5XL|6XL|7XL|8XL|9XL)(?=$|[\s\-])/';
                         preg_match_all($sizePattern, $prodName, $matches);
@@ -152,7 +156,7 @@ class TallyController extends ResourceController
                         if ($final_prodname != '' && $final_size != '') {
                             foreach ($table_names as $table) {
                                 $query_res = $db->query(
-                                    "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE product_name = ?",
+                                    "SELECT COUNT(*) as count, prod_id, tbl_name, quantity FROM $table WHERE billing_name = ?",
                                     [$final_prodname]
                                 )->getRow();
 
@@ -164,18 +168,87 @@ class TallyController extends ResourceController
                             }
 
 
-
+                            // $Main_QTY = $getconfig_data->quantity;
                             $Config_prodid = $getconfig_data->prod_id;
                             $Config_tblname = $getconfig_data->tbl_name;
 
+
+
+
                             $configqry = "SELECT * FROM `tbl_configuration` WHERE `prod_id` = ? AND tbl_name = ? AND `flag` = 1;";
-                            $getRes = $db->query($configqry, [$Config_prodid, $Config_tblname])->getRow();
+                            $getRes = $db->query($configqry, [$Config_prodid, $Config_tblname])->getResultArray();
+
+                            $configID = $getRes[0]['config_id'];
 
 
-                            print_r($getRes);
+                            $newSizearray = [];
+                            $newStockarray = [];
 
-                            // Handle configuration update...
-                            // Add results to $res here
+                            if (!empty($getRes)) {
+                                $totalSize = $getRes[0]['size'];
+                                $totalStock = $getRes[0]['soldout_status'];
+
+
+                                $totalSize = str_replace(array('[', ']', '"'), '', $totalSize);
+                                $totalSize = explode(",", $totalSize);
+
+                                $totalStock = str_replace(array('[', ']', '"'), '', $totalStock);
+                                $totalStock = explode(",", $totalStock);
+
+
+                                // Iterate over each size and update stock
+                                for ($i = 0; $i < count($totalSize); $i++) {
+                                    $oldSize = $totalSize;
+
+                                    if (trim($oldSize[$i]) == trim($final_size[0])) {
+
+                                        $newStockarray[$i] = (string) $Tallystock;
+                                    } else {
+
+                                        $newStockarray[$i] = $totalStock[$i];
+                                    }
+                                }
+                            }
+
+                            $Main_QTY = 0;
+                            for ($j = 0; $j < count($newStockarray); $j++) {
+                                $Main_QTY += $newStockarray[$j];
+                            }
+
+
+
+                            $updatedStock = json_encode($newStockarray);
+
+
+                            $updateConfigqry = "UPDATE tbl_configuration SET soldout_status = ? WHERE  config_id= ? AND tbl_name =? AND prod_id = ?";
+                            $updateConfig = $db->query($updateConfigqry, [$updatedStock, $configID, $Config_tblname, $Config_prodid]);
+                            $affectedRows = $db->affectedRows();
+
+
+                            if ($affectedRows > 0) {
+
+                                $UpdateMainprod_qry = "UPDATE $Config_tblname SET quantity =? WHERE prod_id= ? AND tbl_name = ?";
+                                $updateData = $db->query($UpdateMainprod_qry, [$Main_QTY, $Config_prodid, $Config_tblname]);
+                                $affectedRows2 = $db->affectedRows();
+
+                                if ($affectedRows2 > 0) {
+                                    $res['code'] = 200;
+                                    $res['status'] = 'Success';
+                                    $res['message'] = 'Stock updated successfully.';
+
+                                } else {
+                                    $res['code'] = 400;
+                                    $res['status'] = 'Failure';
+                                    $res['message'] = 'Stock updated Failed';
+                                }
+                            } else {
+                                $res['code'] = 400;
+                                $res['status'] = 'Failure';
+                                $res['message'] = 'Size Stock updated Failed';
+                            }
+
+
+
                         } else {
 
                             $res['code'] = 400;
@@ -184,11 +257,16 @@ class TallyController extends ResourceController
 
 
                         }
+                    } else {
+                        $res['code'] = 400;
+                        $res['status'] = 'Failure';
+                        $res['message'] = 'Invalid product name';
                     }
                 }
             }
+            echo json_encode($res);
 
-            return $this->respond($res);
+
         } catch (\Exception $e) {
             return ['code' => 500, 'message' => 'Error occurred: ' . $e->getMessage(), 'status' => 'Failure'];
         }

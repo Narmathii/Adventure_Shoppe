@@ -654,6 +654,7 @@ ORDER BY
         $tblName = "tbl_rproduct_list";
 
 
+
         $data2 = [
             'prod_id' => $prodID,
             'tbl_name' => $tblName,
