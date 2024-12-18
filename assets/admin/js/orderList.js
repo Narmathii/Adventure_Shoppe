@@ -25,7 +25,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         res_DATA = data;
-        console.log(res_DATA);
+
         dispOrderDetails(res_DATA);
       },
       error: function () {
@@ -299,10 +299,13 @@ $(document).ready(function () {
       url: base_Url + "get-order-details",
       success: function (data) {
         let viewOrder = $.parseJSON(data);
-        console.log(viewOrder[0]["address"]);
-        let sizee = viewOrder.length;
 
+        let sizee = viewOrder.length;
+        
         // Address
+        $("#user-name").html(viewOrder[0]["username"]);
+        $("#email-data").html(viewOrder[0]["email"]);
+
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );
@@ -324,8 +327,8 @@ $(document).ready(function () {
         const paymentStatus = viewOrder[0]["payment_status"];
         const OrderStatus = viewOrder[0]["order_status"];
 
-        alert(OrderStatus);
-        alert(paymentStatus === "PENDING" && OrderStatus === "initiated");
+        // alert(OrderStatus);
+        // alert(paymentStatus === "PENDING" && OrderStatus === "initiated");
 
         if (paymentStatus === "PENDING" && OrderStatus != "initiated") {
           $("#payment-sts-btn").css("display", "block");
@@ -350,6 +353,16 @@ $(document).ready(function () {
         }
 
         $("#payment-sts").html("" + status);
+
+        let cancelReason = viewOrder[0]["cancel_reason"];
+        let cancelView = "";
+        cancelView += ` 
+                          <h6>Cancel Reason</h6>
+                        
+                        <p>${cancelReason}</p>`;
+        $(".cancel-reason").html(cancelView);
+
+        
 
         let tblData = "";
         for (i = 0; i < sizee; i++) {

@@ -24,7 +24,7 @@ user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30vh;
+  height: 40vh;
   /* width: 100vw; */
   overflow: hidden;
   font-family: Helvetica, sans-serif;
@@ -90,7 +90,7 @@ user-select: none;
   color: var(--green);
   text-align: center;
   position: absolute;
-  top: 2.5em;
+  top: 1.5em;
   width: 8rem;
 }
 

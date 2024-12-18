@@ -194,11 +194,15 @@ class HproductController extends BaseController
             ON a.h_menu_id = b.h_menu_id  
             INNER JOIN tbl_helmet_submenu AS c ON 
             c.h_submenu_id = b.h_submenu_id
+            WHERE b.flag = 1 AND b.flag = 1
          ORDER BY 
         h_menu ASC';
 
-
         $prodData = $db->query($q1)->getResultArray();
+
+
+
+
         for ($i = 0; $i < count($prodData); $i++) {
             $table_name = $prodData[$i]['tbl_name'];
 
@@ -237,6 +241,10 @@ class HproductController extends BaseController
             // Merge the first configuration record with the product data
             $prodData[$i] = array_merge($prodData[$i], $getConfigRes[0]);
         }
+
+        // echo "<pre>";
+        // print_r($prodData);
+        // die;
 
 
         echo json_encode($prodData);

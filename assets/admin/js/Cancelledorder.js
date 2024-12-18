@@ -293,6 +293,8 @@ $(document).ready(function () {
         $("#cancel-orderid").val(viewOrder[0]["order_id"]);
         // Address
         $("#user-name").html(viewOrder[0]["username"]);
+        $("#email-data").html(viewOrder[0]["email"]);
+
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );

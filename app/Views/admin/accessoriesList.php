@@ -331,7 +331,7 @@
                                     <img src="" id="product_image_url" alt="image" width="130px"
                                         style="padding-top: 15px; display:none;">
 
-                                    <span class="error text-danger product_img mt-5"></span>
+                                    <span clasas="error text-danger product_img mt-5"></span>
                                 </div>
 
 

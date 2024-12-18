@@ -442,7 +442,7 @@ require("components/head.php");
 
                                 <div class="form-outline">
                                   <input min="1" step="1" name="quantity" value="<?php echo $cart_product[$i]->quantity ?>"
-                                    type="number" class="form-control quantity_<?php echo $cart_product[$i]->cart_id ?>" />
+                                    type="number" class="form-control quantity_<?php echo $cart_product[$i]->cart_id ?>"  readonly/>
                                   <label class="form-label">Quantity</label>
                                 </div>
 

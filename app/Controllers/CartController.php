@@ -139,7 +139,7 @@ class CartController extends BaseController
         $this->session = \Config\Services::session();
         $data = $this->request->getPost();
 
-    
+
         $tblName = $this->request->getPost('table_name');
         $prodID = $this->request->getPost('prod_id');
         $qty = $this->request->getPost('quantity');
@@ -412,7 +412,7 @@ class CartController extends BaseController
 
         $finalCharge = ceil($total);
 
-
+    
         // $finalCharge = 1;
         echo json_encode($finalCharge);
     }

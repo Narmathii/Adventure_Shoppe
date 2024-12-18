@@ -130,7 +130,6 @@ class BuynowController extends BaseController
         $userID = $this->session->get('user_id');
 
 
-
         if ($size == "") {
             $size = 0;
         }
@@ -202,7 +201,7 @@ class BuynowController extends BaseController
 
         $orderModel = new OrdersModel;
 
-        $random_number = mt_rand();
+        $random_number = mt_rand(1000, 9999);
         $orderNO = "AS2024" . $random_number;
 
         // price calculation
@@ -286,27 +285,122 @@ class BuynowController extends BaseController
 
 
         $totalAmt = $this->request->getPost('totalamt');
-
         $courierCharge = $this->request->getPost('courierCharge');
-
-        $random_number = mt_rand();
-
-        $orderNO = "AS2024" . $random_number;
-
+        $State = $this->request->getPost('stateid');
+        $courierType = $this->request->getPost('courier_type');
         $userID = session()->get('user_id');
 
+
+        $buynowQuery = "SELECT * FROM `tbl_buynow` WHERE `user_id` = ?";
+        $buynowData = $db->query($buynowQuery, [$userID])->getResultArray();
+        if (empty($buynowData)) {
+            return json_encode(['code' => 400, 'status' => false, 'message' => 'No product Selected!']);
+        }
+
+        $totalWeightKg = 0;
+        $finalCourierCharge = 0;
+        $OrderPrice = 0;
+
+
+        foreach ($buynowData as $item) {
+            $prodID = $item['prod_id'];
+            $tblName = $item['table_name'];
+            $cartQuantity = $item['quantity'];
+            $cartPrice = $item['prod_price'];
+            $cartSubtotal = $item['sub_total'];
+
+            // Fetch the original product details for validation
+            $originalProductQuery = "SELECT `prod_id`, `quantity`, `offer_price`, `tbl_name`, `weight` 
+                             FROM $tblName 
+                             WHERE `prod_id` = ?";
+            $originalProductData = $db->query($originalProductQuery, [$prodID])->getRow();
+
+
+            if (!$originalProductData) {
+                return json_encode(['code' => 400, 'status' => false, 'message' => 'Invalid product.']);
+            }
+
+            $originalQty = $originalProductData->quantity;
+            $originalPrice = $originalProductData->offer_price;
+            $originalWeight = $originalProductData->weight;
+
+            // Correct cart price and quantity if mismatched
+            $finalPrice = ($cartPrice == $originalPrice) ? $cartPrice : $originalPrice;
+
+
+
+            if ($cartQuantity <= $originalQty && $cartPrice == $originalPrice) {
+                $OrderPrice += $cartSubtotal;
+            } else {
+                $OrderPrice += $originalPrice * $cartQuantity;
+            }
+
+
+            // Calculate total weight
+            if (!empty($originalWeight)) {
+                $prodWeightKg = $originalWeight / 1000;
+                $totalWeightKg += $cartQuantity * $prodWeightKg;
+            }
+
+
+            // Fetch courier charge for the product
+            $courierChargeQuery = "SELECT `charges` 
+                           FROM `tbl_courier_charges` 
+                           WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
+                           AND courier_id = ? AND dist_id = 0";
+            $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
+
+            if ($courierChargeData) {
+                $finalCourierCharge = $courierChargeData->charges;
+            }
+        }
+
+        // Calculate courier charges based on total weight
+        if ($totalWeightKg <= 1) {
+            $totalCharge = $finalCourierCharge;
+        } else {
+            $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
+        }
+
+        // Calculate GST and final total
+        $GST = 0.18;
+        $gstAmount = $totalCharge * $GST;
+        $finalTotal = ceil($totalCharge + $gstAmount + 10);
+
+
+        // check Courier charge
+        if ($finalTotal != $courierCharge) {
+            $totalcourierCharge = $finalTotal;
+        } else {
+            $totalcourierCharge = $courierCharge;
+        }
+
+        $finalOrderPrice = $OrderPrice + $totalcourierCharge;
+
+
+        $random_number = mt_rand(1000, 9999);
+        $orderNO = "AS2024" . $random_number;
+
+
+
         $getAddreess = $db->query("SELECT `add_id` FROM `tbl_user_address` WHERE `user_id` = $userID  AND  `flag` =1 AND `default_addr` = 1")->getRow();
+        if (!$getAddreess->add_id) {
+            return json_encode(['status' => false, 'message' => 'Default address not found!']);
+        }
 
         $addID = $getAddreess->add_id;
 
+
+        // Prepare corrected order data
         $OrderData = [
             'order_no' => $orderNO,
             'user_id' => $userID,
-            'sub_total' => $totalAmt,
+            'sub_total' => $finalOrderPrice,
             'add_id' => $addID,
             'order_status' => "initiated",
             'order_date' => date('d-m-Y'),
-            'courier_charge' => $courierCharge,
+            'courier_charge' => $totalcourierCharge,
+
         ];
 
         $insertOrder = $orderModel->insert($OrderData);

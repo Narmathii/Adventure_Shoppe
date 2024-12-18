@@ -90,14 +90,30 @@
             <div class="modal-body">
                 <form id="modal-form">
                     <div class="row">
+                    <div class="col-md-12">
+                            <div class="card custom-card card-bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="">
+                                            <div class="fs-15 fw-semibold">User Details</div>
+                                            <p class="name-text mt-3" id="user-name">
+                                            </p>
+                                            <p class="email-text mt-3" id="email-data">
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div class="col-md-6">
                             <div class="card custom-card card-bg-light">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
-                                            <p class="name-text mt-3" id="user-name">
-                                            </p>
+                                           
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">
@@ -184,7 +200,9 @@
                     </div>
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a class="btn btn-primary" id="btn-submit" data-bs-dismiss="modal" aria-label="Close">Close</a>
+                        <a class="btn btn-success" id="btn-print"><i class="bi bi-printer"></i> Print</a>
+                        <a class="btn btn-primary ms-3" id="btn-submit" data-bs-dismiss="modal"
+                            aria-label="Close">Close</a>
                     </div>
                 </form>
             </div>

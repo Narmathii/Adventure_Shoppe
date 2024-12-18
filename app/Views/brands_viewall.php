@@ -69,7 +69,7 @@ require ("components/head.php");
     }
 
     .brand_container img {
-        width: 70%;
+        width: 60%;
         margin-left: auto;
         margin-right: auto;
         height: auto;

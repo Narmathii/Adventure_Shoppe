@@ -301,6 +301,8 @@ $(document).ready(function () {
 
         // Address
         $("#user-name").html(viewOrder[0]["username"]);
+        $("#email-data").html(viewOrder[0]["email"]);
+
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );
@@ -499,4 +501,22 @@ $(document).ready(function () {
       },
     });
   });
+
+    // *************************** [Print Details] *************************************************************************
+    $("#btn-print").click(function () {
+      let print_id = PrintID;
+      var encodedPrintID = btoa(print_id);
+      var pdfURL = base_Url + "pdf-viewpage/" + encodedPrintID;
+  
+      var printWindow = window.open(pdfURL, "_blank");
+  
+      if (printWindow) {
+        printWindow.print();
+        printWindow.onafterprint = function () {
+          printWindow.close();
+        };
+      } else {
+        alert("Popup blocked! Please allow popups for this site.");
+      }
+    });
 });

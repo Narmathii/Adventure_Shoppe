@@ -315,11 +315,11 @@ video {
     }
 
     .menu .menu__inner .menu__item:hover>.menu__link {
-        color: var(--color);
+        color: #a1c530;
     }
 
     .darkmode .menu .menu__inner .menu__item:hover>.menu__link {
-        color: var(--color);
+        color: #a1c530;
     }
 
     @media (max-width: 766px) {
@@ -525,7 +525,7 @@ video {
     }
 
     .submenu .submenu__inner .submenu__title {
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 500;
         color: var(--color);
         text-transform: capitalize;
@@ -551,8 +551,8 @@ video {
 
     .submenu .submenu__list li a {
         display: inline-block;
-        padding: 10px 0;
-        line-height: 1.4;
+        padding: 8px 0;
+        line-height: 1;
         text-transform: capitalize !important;
         color: #000;
         transition: all 0.25s ease-in-out;

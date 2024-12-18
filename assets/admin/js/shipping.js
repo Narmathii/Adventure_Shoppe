@@ -1,6 +1,7 @@
 $(document).ready(function () {
   var mode, JSON, res_DATA, order_id, dispStatus;
-  var orderID = "";
+  var orderID = "",
+    PrintID;
 
   $.when(getOrderList()).done(function () {
     dispOrderDetails(JSON);
@@ -288,6 +289,7 @@ $(document).ready(function () {
   $(document).on("click", ".orderDetails", function () {
     $("#order_form").modal("show");
     var orderid = $(this).attr("order-id");
+    PrintID = orderid;
     var index = $(this).attr("id");
 
     $.ajax({
@@ -296,11 +298,13 @@ $(document).ready(function () {
       url: base_Url + "get-order-details",
       success: function (data) {
         let viewOrder = $.parseJSON(data);
-        console.log(viewOrder[0]["address"]);
+
         let sizee = viewOrder.length;
 
         // Address
         $("#user-name").html(viewOrder[0]["username"]);
+        $("#email-data").html(viewOrder[0]["email"]);
+
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );
@@ -498,5 +502,23 @@ $(document).ready(function () {
         $("#tracking-details tbody").append(tblData);
       },
     });
+  });
+
+  // *************************** [Print Details] *************************************************************************
+  $("#btn-print").click(function () {
+    let print_id = PrintID;
+    var encodedPrintID = btoa(print_id);
+    var pdfURL = base_Url + "pdf-viewpage/" + encodedPrintID;
+
+    var printWindow = window.open(pdfURL, "_blank");
+
+    if (printWindow) {
+      printWindow.print();
+      printWindow.onafterprint = function () {
+        printWindow.close();
+      };
+    } else {
+      alert("Popup blocked! Please allow popups for this site.");
+    }
   });
 });

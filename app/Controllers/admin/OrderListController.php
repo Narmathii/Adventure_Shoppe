@@ -11,10 +11,8 @@ class OrderListController extends BaseController
 
     public function __construct()
     {
-
         $this->apiKey = $_ENV['RAZORPAY_KEY_ID'];
         $this->apiSecret = $_ENV['RAZORPAY_KEY_SECRET'];
-
 
         $this->api = new Api($this->apiKey, $this->apiSecret);
     }
@@ -29,20 +27,17 @@ class OrderListController extends BaseController
         } else {
             return view("admin/orderList");
         }
-
     }
 
     public function getOrderList()
     {
         $db = \Config\Database::connect();
         $query =
-
-            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date ,  DATE_FORMAT(a.delivery_date, '%a, %d %b') AS deliverydate
+            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date ,  DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate
             FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
             WHERE a.flag = 1 AND b.flag = 1 AND a.order_status <> 'initiated' AND  a.payment_status <> 'PENDING'";
         $orderDetail = $db->query($query)->getResultArray();
-
 
         echo json_encode($orderDetail);
     }
@@ -69,7 +64,7 @@ class OrderListController extends BaseController
             a.payment_status,a.delivery_status,a.cancel_reason,
             b.`quantity`, b.`prod_price`, b.`sub_total` AS product_price, 
             b.color,b.hex_code,b.size,b.config_image1,b.color_name,b.color_name,c.product_name,
-            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username
+            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username,g.email
                         FROM tbl_orders AS a 
                         LEFT JOIN tbl_order_item AS b ON a.order_id = b.order_id 
                         INNER JOIN $tableName AS c ON b.prod_id = c.prod_id
@@ -193,6 +188,56 @@ class OrderListController extends BaseController
 
     }
 
+
+    public function updateCancelReason()
+    {
+        $db = \Config\Database::connect();
+        $data = $this->request->getPost();
+
+
+        $delivery_status = $this->request->getPost('delivery_status');
+        $order_id = $this->request->getPost('order_id');
+        $cancelReason = $this->request->getPost('cancelReason');
+        $delivery_message = 6;
+
+
+        $query = "UPDATE tbl_orders SET 
+                    delivery_status = ?, 
+                    delivery_message = ?,
+                    cancel_reason = ?";
+
+        $params = [$delivery_status, $delivery_message, $cancelReason];
+
+
+        if ($delivery_status == 2) {
+            $query .= ", order_date = NOW()";
+        } elseif ($delivery_status == 3) {
+            $query .= ", process_date = NOW()";
+        } elseif ($delivery_status == 4) {
+            $query .= ", shipped_date = NOW()";
+        } elseif ($delivery_status == 5) {
+            $query .= ", delivery_date = NOW()";
+        }
+
+
+        $query .= " WHERE order_id = ?";
+        $params[] = $order_id;
+
+        $update = $db->query($query, $params);
+        $affectedRows = $db->affectedRows();
+
+        if ($affectedRows) {
+            $res['code'] = 200;
+            $res['status'] = "success";
+            $res['msg'] = "Data updated successfully";
+        } else {
+            $res['code'] = 400;
+            $res['status'] = "failure";
+            $res['msg'] = "Data updated failed";
+        }
+        echo json_encode($res);
+    }
+
     public function updateDeliveryStatus()
     {
         $db = \Config\Database::connect();
@@ -204,6 +249,7 @@ class OrderListController extends BaseController
         $delivery_status = $this->request->getPost('delivery_status');
 
 
+
         $query = "UPDATE tbl_orders SET 
                     delivery_status = ?, 
                     delivery_message = ?";
@@ -212,13 +258,13 @@ class OrderListController extends BaseController
         $params = [$delivery_status, $delivery_status];
 
 
-        if ($delivery_status == 1) {
+        if ($delivery_status == 2) {
             $query .= ", order_date = NOW()";
-        } elseif ($delivery_status == 2) {
-            $query .= ", process_date = NOW()";
         } elseif ($delivery_status == 3) {
-            $query .= ", shipped_date = NOW()";
+            $query .= ", process_date = NOW()";
         } elseif ($delivery_status == 4) {
+            $query .= ", shipped_date = NOW()";
+        } elseif ($delivery_status == 5) {
             $query .= ", delivery_date = NOW()";
         }
 
@@ -330,7 +376,7 @@ class OrderListController extends BaseController
             a.payment_status,a.delivery_status,a.cancel_reason,
             b.`quantity`, b.`prod_price`, b.`sub_total` AS product_price, 
             b.color,b.hex_code,b.size,b.config_image1,b.color_name,b.color_name,c.product_name,
-            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username
+            c.product_img, c.stock_status, d.*,e.state_title ,f.dist_name,g.number,g.username,g.email
                         FROM tbl_orders AS a 
                         LEFT JOIN tbl_order_item AS b ON a.order_id = b.order_id 
                         INNER JOIN $tableName AS c ON b.prod_id = c.prod_id

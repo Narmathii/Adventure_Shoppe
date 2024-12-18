@@ -479,13 +479,16 @@ $(document).ready(function () {
     let amt = totalAmt.replace("₹", "");
     let Amtt = parseInt(amt.replace(",", ""));
 
+    let State = $("#cart-state-id").val();
+    let CourierType = $('input[name="courier_option"]:checked').val();
+
     let courier = $("#courier-charge").text();
     let courierCharge = courier.replace("₹", "");
 
     $.ajax({
       type: "POST",
       url: base_Url + "cart-checkout",
-      data: { totalamt: Amtt, courierCharge: courierCharge },
+      data: { totalamt: Amtt, courierCharge: courierCharge ,stateid :  State,courier_type :CourierType},
       dataType: "json",
       success: function (data) {
         if (data.code == 200) {

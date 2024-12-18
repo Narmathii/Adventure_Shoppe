@@ -103,9 +103,15 @@
                 <table class="tbl-address mt-4">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 60%; border: 1px solid #000;">Customer Name</th>
+                            <th scope="col" style="width: 60%; border: 1px solid #000;">Name</th>
                             <td scope="col" style="width: 60%; border: 1px solid #000;">
                                 <?php echo $data[0]['username'] ?></td>
+
+                        </tr>
+                        <tr>
+                            <th scope="col" style="width: 60%; border: 1px solid #000;">Email</th>
+                            <td scope="col" style="width: 60%; border: 1px solid #000;">
+                                <?php echo $data[0]['email'] ?></td>
 
                         </tr>
                         <tr>

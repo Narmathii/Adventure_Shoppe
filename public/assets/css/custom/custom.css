@@ -1,9 +1,101 @@
 /* body {
   font-family: "poppins";
 } */
- .block-with-text > span >ul>li{
-   color :#000 !important
- }
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+.pagination ul{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background: #fff;
+  padding: 8px;
+  border-radius: 50px;
+  /* box-shadow: 0px 10px 15px rgba(0,0,0,0.1); */
+}
+.pagination ul li{
+  color: #829B2F;;
+  list-style: none;
+  line-height: 45px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+.pagination ul li.numb{
+  list-style: none;
+  height: 45px;
+  width: 45px;
+  margin: 0 3px;
+  line-height: 45px;
+  border-radius: 50%;
+}
+.pagination ul li.numb.first{
+  margin: 0px 3px 0 -5px;
+}
+.pagination ul li.numb.last{
+  margin: 0px -5px 0 3px;
+}
+.pagination ul li.dots{
+  font-size: 22px;
+  cursor: default;
+}
+.pagination ul li.btn{
+  padding: 0 20px;
+  border-radius: 50px;
+}
+.pagination li.active,
+.pagination ul li.numb:hover,
+.pagination ul li:first-child:hover,
+.pagination ul li:last-child:hover{
+  color: #fff;
+  background: #829B2F;;
+}
+
+
+
+/* Pagination... */
+
+/* For laptops */
+@media (min-width: 769px) {
+  .container.access_list_grid {
+    max-width: 1230px;
+  }
+
+  .price-field input[type="range"] {
+    width: 198px !important;
+    height: 5px;
+  }
+
+  .price-field.price-field.mobile-view {
+    padding-left: 9px !important;
+  }
+}
+
+/* For monitors */
+@media (min-width: 1401px) {
+  .container.access_list_grid {
+    max-width: 1480px;
+  }
+  .price-field input[type="range"] {
+    width: 268px;
+    height: 2px;
+  }
+  .price-field.web-view {
+    padding-left: 70px !important;
+  }
+}
+@media (max-width: 768px) {
+  .price-field.price-field.mobile-view {
+    padding-left: 9px !important;
+  }
+}
+
+.block-with-text > span > ul > li {
+  color: #000 !important;
+}
 a {
   color: #fff;
 }
@@ -605,7 +697,7 @@ img {
     .submenu__title {
       font-size: 20px;
       font-weight: 500;
-      color: var(--color) !important;
+      color: #a1c530 !important;
       text-transform: uppercase;
       transition: all 0.3s ease;
 
@@ -959,7 +1051,7 @@ body {
 }
 
 h4.submenu__title {
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 }
 /* 
 h4,
@@ -3511,10 +3603,9 @@ h3 {
     justify-content: space-between;
   }
 
-  .recently_view.buynow_btn{
+  .recently_view.buynow_btn {
     font-size: 12px !important;
-
-  } 
+  }
   .buynow_btn {
     height: 30px !important;
     font-size: 14px !important;
@@ -3907,15 +3998,13 @@ button:active {
     linear-gradient(to top, #616161, #999999);
   background-origin: border-box;
   background-clip: content-box, border-box;
-  min-height:220px;
+  min-height: 220px;
 }
 
-@media only screen and (max-width : 767px)
-{
-  #social_media .img-fluid  {
+@media only screen and (max-width: 767px) {
+  #social_media .img-fluid {
     min-height: 80px !important;
   }
-  
 }
 .img-right {
   position: absolute;
@@ -4252,7 +4341,6 @@ a {
   font-size: 16x !important;
 }
 
-
 #step-next {
   height: 40px;
   display: flex;
@@ -4398,7 +4486,7 @@ a {
   padding: 8px;
   margin-top: 5px;
   border-radius: 10px;
-  min-height:283px !important; 
+  min-height: 283px !important;
 }
 
 /* @media only screen and(max-width:767px){
@@ -4417,11 +4505,10 @@ a {
   justify-content: center;
   font-weight: 500;
   font-family: "poppins" !important;
-  font-size: 17px;
+  font-size: 12px;
 }
 
- #section-newArrival .recently_view.buynow_btn
-{
+#section-newArrival .recently_view.buynow_btn {
   font-size: 17px;
 }
 #section-newArrivalView .de-item .d-img img {
@@ -5323,8 +5410,8 @@ a {
 /* Reset style for input range */
 
 .price-field input[type="range"] {
-  width: 188px;
-  height: 2px;
+  width: 268px;
+  height: 5px;
   border: 0;
   outline: 0;
   box-sizing: border-box;

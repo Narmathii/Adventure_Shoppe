@@ -12,29 +12,132 @@ class CartCheckoutController extends BaseController
         $db = \Config\Database::connect();
         $orderModel = new OrdersModel;
 
-        $totalAmt = $this->request->getPost('totalamt');
+        $data = $this->request->getPost();
+
         $courierCharge = $this->request->getPost('courierCharge');
-        $random_number = mt_rand();
+        $totalAmt = $this->request->getPost('totalamt');
+        $State = $this->request->getPost('stateid');
+        $courierType = $this->request->getPost('courier_type');
+        $randomNumber = mt_rand(1000, 9999);
 
-        $orderNO = "AS2024" . $random_number;
-
-
+        $orderNO = "AS2024" . $randomNumber;
         $userID = session()->get('user_id');
-        $getAddreess = $db->query("SELECT `add_id` FROM `tbl_user_address` WHERE `user_id` = $userID  AND  `flag` =1 AND `default_addr` = 1")->getRow();
 
-        $addID = $getAddreess->add_id;
+        // Fetch user cart data
+        $cartQuery = "SELECT * FROM `tbl_user_cart` WHERE `user_id` = ?";
+        $cartData = $db->query($cartQuery, [$userID])->getResultArray();
 
-        $OrderData = [
+        if (empty($cartData)) {
+            return json_encode(['code' => 400, 'status' => false, 'message' => 'Cart is empty!']);
+        }
+
+        $totalWeightKg = 0;
+        $finalCourierCharge = 0;
+        $OrderPrice = 0;
+
+
+        // Iterate over cart items to validate and correct data
+        foreach ($cartData as $item) {
+            $prodID = $item['prod_id'];
+            $tblName = $item['table_name'];
+            $cartQuantity = $item['quantity'];
+            $cartPrice = $item['prod_price'];
+            $cartSubtotal = $item['sub_total'];
+
+            // Fetch the original product details for validation
+            $originalProductQuery = "SELECT `prod_id`, `quantity`, `offer_price`, `tbl_name`, `weight` 
+                             FROM $tblName 
+                             WHERE `prod_id` = ?";
+            $originalProductData = $db->query($originalProductQuery, [$prodID])->getRow();
+
+
+            if (!$originalProductData) {
+                return json_encode(['code' => 400, 'status' => false, 'message' => 'Invalid product in cart.']);
+            }
+
+            $originalQty = $originalProductData->quantity;
+            $originalPrice = $originalProductData->offer_price;
+            $originalWeight = $originalProductData->weight;
+
+            // Correct cart price and quantity if mismatched
+            $finalPrice = ($cartPrice == $originalPrice) ? $cartPrice : $originalPrice;
+
+
+
+            if ($cartQuantity <= $originalQty && $cartPrice == $originalPrice) {
+                $OrderPrice += $cartSubtotal;
+            } else {
+                $OrderPrice += $originalPrice * $cartQuantity;
+            }
+
+
+            // Calculate total weight
+            if (!empty($originalWeight)) {
+                $prodWeightKg = $originalWeight / 1000;
+                $totalWeightKg += $cartQuantity * $prodWeightKg;
+            }
+
+
+            // Fetch courier charge for the product
+            $courierChargeQuery = "SELECT `charges` 
+                           FROM `tbl_courier_charges` 
+                           WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
+                           AND courier_id = ? AND dist_id = 0";
+            $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
+
+            if ($courierChargeData) {
+                $finalCourierCharge = $courierChargeData->charges;
+            }
+        }
+
+        // Calculate courier charges based on total weight
+        if ($totalWeightKg <= 1) {
+            $totalCharge = $finalCourierCharge;
+        } else {
+            $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
+        }
+
+        // Calculate GST and final total
+        $GST = 0.18;
+        $gstAmount = $totalCharge * $GST;
+        $finalTotal = ceil($totalCharge + $gstAmount + 10);
+
+
+        // check Courier charge
+        if ($finalTotal != $courierCharge) {
+            $totalcourierCharge = $finalTotal;
+        } else {
+            $totalcourierCharge = $courierCharge;
+        }
+
+        $finalOrderPrice = $OrderPrice + $totalcourierCharge;
+
+
+        // Fetch default address for the user
+        $addressQuery = "SELECT `add_id` 
+                 FROM `tbl_user_address` 
+                 WHERE `user_id` = ? AND `flag` = 1 AND `default_addr` = 1";
+        $addressData = $db->query($addressQuery, [$userID])->getRow();
+
+        if (!$addressData) {
+            return json_encode(['status' => false, 'message' => 'Default address not found!']);
+        }
+
+        $addID = $addressData->add_id;
+
+        // Prepare corrected order data
+        $orderData = [
             'order_no' => $orderNO,
             'user_id' => $userID,
-            'sub_total' => $totalAmt,
+            'sub_total' => $finalOrderPrice,
             'add_id' => $addID,
             'order_status' => "initiated",
             'order_date' => date('d-m-Y'),
-            'courier_charge' => $courierCharge,
+            'courier_charge' => $totalcourierCharge,
+
         ];
 
-        $insertOrder = $orderModel->insert($OrderData);
+        $insertOrder = $orderModel->insert($orderData);
         $OrderID = $db->insertID();
 
 
@@ -82,11 +185,11 @@ class CartCheckoutController extends BaseController
 
                 if ($affectedRows === 1) {
                     $res['code'] = 200;
-                    $res['msg'] = "OrderPlaced";
+                    $res['message'] = "OrderPlaced";
 
                 } else {
                     $res['code'] = 400;
-                    $res['msg'] = "Error while place order";
+                    $res['message'] = "Error while place order";
 
                 }
             }

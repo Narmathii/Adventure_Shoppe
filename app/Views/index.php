@@ -746,7 +746,7 @@ for ($i = 0; $i < count($banner); $i++) {
                                                     <p class="d-flex wish-status">
                                                         <span class="d-flex align-items-center similar-products">
                                                             <?php
-                                                            $stock = $product[$i]['quantity'];
+                                                            $stock = $recent_products[$i]['quantity'];
                                                             if ($stock <= 0) { ?>
                                                                 <span class="product_status outof_stock">
                                                                     <label>Out of stock</label>
@@ -761,7 +761,7 @@ for ($i = 0; $i < count($banner); $i++) {
                                                     </p>
 
                                                     <?php
-                                                    $stock = $product[$i]['quantity'];
+                                                    $stock = $recent_products[$i]['quantity'];
                                                     if ($stock <= 0) { ?>
                                                         <div>
                                                             <a class="btn-main recently_view buynow_btn"

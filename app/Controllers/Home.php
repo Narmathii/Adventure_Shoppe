@@ -391,8 +391,6 @@ GROUP BY `product_id` HAVING SUM(`prod_count`)<=10";
 
         $modalID = base64_decode($segID);
 
-
-
         $segment = ucwords(str_replace('-', ' ', $segName));
 
         $db = \Config\Database::connect();
@@ -417,7 +415,7 @@ GROUP BY `product_id` HAVING SUM(`prod_count`)<=10";
                     FROM tbl_modal_master AS a 
                     LEFT JOIN tbl_accessories_list AS b 
                     ON a.modal_id = ? 
-                    WHERE b.prod_id = ? AND b.flag = 1 AND a.modal_id = ?";
+                    WHERE b.prod_id = ? AND b.flag = 1 AND a.modal_id = ? ORDER BY b.product_name ASC";
 
                     $productDetails = $db->query($query, [$modalID, $prodID, $modalID])->getRow();
                     if ($productDetails) {
@@ -425,11 +423,13 @@ GROUP BY `product_id` HAVING SUM(`prod_count`)<=10";
                     }
                 }
             }
+           
+
         }
 
         $res['sub_id'] = $modalID;
-
-
+        
+       
 
         // Fetch products where modal_name is 0
         $getCommon = $db->query("SELECT * FROM tbl_common_accessories 
@@ -448,8 +448,15 @@ WHERE b.flag = 1 AND b.prod_id = ? ;";
             }
         }
 
+        if(!empty($product))
+        {
+            $productNames = array_column($product, 'product_name');
+            array_multisort($productNames, SORT_ASC, $product);
+        }
+     
         $res['product'] = $product;
 
+      
 
         // $res['product'] = $db->query("SELECT a.modal_name AS modal, 
         //         b.* 
@@ -588,7 +595,7 @@ AND `flag` = 1;
             FROM tbl_accessories_list AS a INNER JOIN tbl_subaccess_master AS b
             ON a.sub_access_id = b.sub_access_id
             WHERE b.sub_access_id = $subID
-            AND a.flag = 1 LIMIT 12"
+            AND a.flag = 1 ORDER BY a.product_name ASC LIMIT 12"
         )->getResultArray();
 
         $res['sub_id'] = $subID;
@@ -704,6 +711,7 @@ AND `flag` = 1;
 
 
 
+
         $res['tbl_name'] = "tbl_accessories_list";
         $res['current_url'] = current_url();
 
@@ -738,6 +746,7 @@ AND `flag` = 1;
 
         $q1 = "SELECT DISTINCT * FROM `tbl_accessories_list` WHERE `flag` = 1 AND `sub_access_id` = ?  AND `flag` = 1 AND prod_id <> ?";
         $res['similar'] = $db->query($q1, [$subMenu, $PRODID])->getResultArray();
+
 
 
         /* SIMILAR PRODUCTS NEW   END*/
@@ -785,9 +794,17 @@ AND `flag` = 1;
         $res['r_accessories'] = $db->query("SELECT a.r_sub_menu , b.* FROM 
         tbl_riding_submenu  AS a INNER JOIN tbl_rproduct_list AS b 
         ON a.r_sub_id = b.r_sub_id
-         WHERE b.r_sub_id = $subID AND b.flag= 1 LIMIT 12;")->getResultArray();
+         WHERE b.r_sub_id = $subID AND b.flag= 1  ORDER BY  b.product_name ASC LIMIT 12 ;")->getResultArray();
+         
+        $res['total_data'] = $db->query("SELECT COUNT(`prod_id`) AS total_count FROM `tbl_rproduct_list` WHERE `flag` = 1")->getRow();
+
+        $totalData = $res['total_data']->total_count;
+        $total_page = $totalData/12;
 
 
+        $res['total_page'] = $total_page;
+
+       
         // to get cart count 
         $userID = session()->get('user_id');
         $query = "SELECT * FROM tbl_user_cart WHERE user_id = ? AND flag =1";
@@ -1076,7 +1093,7 @@ AND `flag` = 1;
             FROM tbl_luggage_submenu AS a INNER JOIN tbl_luggagee_products AS b 
             ON a.lug_submenu_id = b.lug_submenu_id 
             WHERE b.lug_submenu_id =   $lugIDD  AND 
-            b.flag = 1 LIMIT 12;"
+            b.flag = 1  ORDER BY b.product_name ASC  LIMIT 12;"
         )->getResultArray();
 
         $res['sub_id'] = $lugIDD;
@@ -1268,7 +1285,7 @@ AND `flag` = 1;
             "SELECT a.h_submenu , b.* FROM 
             tbl_helmet_submenu AS a INNER JOIN tbl_helmet_products AS b 
             ON a.h_submenu_id = b.h_submenu_id 
-            WHERE a.h_submenu_id = $hsubIDD AND b.flag =1 LIMIT 12"
+            WHERE a.h_submenu_id = $hsubIDD AND b.flag =1 ORDER BY b.product_name ASC LIMIT 12"
         )->getResultArray();
 
         $res['sub_id'] = $hsubIDD;
@@ -2276,7 +2293,7 @@ WHERE a.flag= 1 AND b.flag = 1 AND a.`offer_type` =  0
         $db = \Config\Database::connect();
         $res = $this->headerlist();
         $res['product'] = $db->query("SELECT a.c_submenu, b.* FROM tbl_camping_submenu AS a INNER JOIN tbl_camping_products AS b ON a.c_submenu_id = b.c_submenu_id WHERE b.flag = 1 AND a.c_submenu_id =$subID
-         LIMIT 12 ;
+         ORDER BY b.product_name ASC  LIMIT 12 ;
         ")->getResultArray();
 
 
@@ -2719,12 +2736,6 @@ WHERE a.flag= 1 AND b.flag = 1 AND a.`offer_type` =  0
 
 
         $res['order_detail'] = $data;
-
-
-
-        //    echo "<prE>";
-        //    print_r($res['order_detail']);die;
-
 
         return view("trackingorder", $res);
     }

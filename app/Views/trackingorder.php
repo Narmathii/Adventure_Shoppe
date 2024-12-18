@@ -88,6 +88,7 @@
                 <?php if (
                     ($order_detail[0]['delivery_status'] == 'New' || $order_detail[0]['delivery_status'] == 'Pending' || $order_detail[0]['delivery_status'] == 'Shipped') && $order_detail[0]['tracking_id'] != ""
                 ) { ?>  
+                                                         <span class="badge badge-info mb-0">Tracking ID: <?= $order_detail[0]['courier_partner'] ?></span>   
                                                          <span class="badge badge-info mb-0">Tracking ID: <?= $order_detail[0]['tracking_id'] ?></span>   
                 <?php } ?>
                 <!-- For Tracking ID Display end -->

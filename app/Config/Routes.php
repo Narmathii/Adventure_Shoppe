@@ -289,6 +289,8 @@ $routes->post("get-trackingdetails", "admin\OrderListController::getTrackingDeta
 $routes->post("update-trackingdetail", "admin\OrderListController::updateTrackingDetails");
 $routes->post("view-trackingdetail", "admin\OrderListController::viewTrackingDetails");
 $routes->post("update-delivery-status", "admin\OrderListController::updateDeliveryStatus");
+$routes->post("update-cancel-reason", "admin\OrderListController::updateCancelReason");
+
 
 //*************** User Address   ********************** */ 
 $routes->get('state-list', 'admin\AddressController::stateList');
@@ -330,9 +332,6 @@ $routes->post("get-delivery-list", "admin\DashboardController::getDeliverystatus
 $routes->get("notification", "admin\DashboardController::notification");
 $routes->get("refund-details", "admin\DashboardController::refundDetails");
 $routes->post("get-refundetails", "admin\DashboardController::getrefundDetails");
-
-
-
 
 
 // pending order details

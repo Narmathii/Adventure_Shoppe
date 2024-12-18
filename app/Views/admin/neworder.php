@@ -77,6 +77,31 @@
             </div>
         </div>
     </div>
+
+
+</div>
+
+<!-- Cancel Product by Admin -->
+<div class="modal fade bs-example-modal" id="cancel_product_modal" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancel Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="cancel_reason" class="form-label">Reason for Cancellation</label>
+                    <textarea class="form-control" name="cancel_reason" id="cancel_reason" rows="3"></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" id="submit-reason">Submit</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade bs-example-modal-lg modal-lg" id="order_form" tabindex="-1" role="dialog"
@@ -90,14 +115,28 @@
             <div class="modal-body">
                 <form id="modal-form">
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="card custom-card card-bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="">
+                                            <div class="fs-15 fw-semibold">User Details</div>
+                                            <p class="name-text mt-3" id="user-name">
+                                            </p>
+                                            <p class="email-text mt-3" id="email-data">
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="card custom-card card-bg-light">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
-                                            <p class="name-text mt-3" id="user-name">
-                                            </p>
+                                           
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">

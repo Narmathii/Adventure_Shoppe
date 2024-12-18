@@ -40,7 +40,7 @@ class DashboardController extends BaseController
         $db = \Config\Database::connect();
         $query =
 
-            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
+            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date , DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
             WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 4";
         $orderDetail = $db->query($query)->getResultArray();
@@ -83,7 +83,7 @@ class DashboardController extends BaseController
         $db = \Config\Database::connect();
         $query =
 
-            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
+            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date ,DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate  FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
             WHERE a.flag = 1 AND b.flag = 1 AND delivery_status = 5";
         $orderDetail = $db->query($query)->getResultArray();
@@ -131,7 +131,7 @@ class DashboardController extends BaseController
         $db = \Config\Database::connect();
         $query =
 
-            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date FROM tbl_orders AS a INNER JOIN 
+            "SELECT a.*, b.*, DATE_FORMAT(a.order_date, '%d-%m-%Y') AS date , DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate FROM tbl_orders AS a INNER JOIN 
             tbl_users AS b ON a.`user_id` = b.user_id
             WHERE a.flag = 1 AND a.delivery_status =  3 AND b.flag = 1
             ORDER BY `order_date` ASC";
@@ -208,7 +208,8 @@ class DashboardController extends BaseController
             "SELECT
             a.*,
             b.*,
-            DATE_FORMAT(a.order_date, '%d-%m-%Y') AS DATE
+            DATE_FORMAT(a.order_date, '%d-%m-%Y') AS DATE,
+          DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
         FROM
             tbl_orders AS a
         INNER JOIN tbl_users AS b
@@ -263,7 +264,8 @@ class DashboardController extends BaseController
             "SELECT
             a.*,
             b.*,
-            DATE_FORMAT(a.order_date, '%d-%m-%Y') AS DATE
+            DATE_FORMAT(a.order_date, '%d-%m-%Y') AS DATE ,
+          DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
         FROM
             tbl_orders AS a
         INNER JOIN tbl_users AS b

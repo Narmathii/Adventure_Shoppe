@@ -494,7 +494,7 @@
                                                     <p class="d-flex wish-status">
                                                         <span class="d-flex align-items-center similar-products">
                                                             <?php
-                                                            $stock = $product[$i]['quantity'];
+                                                            $stock = $similar[$i]['quantity'];
                                                             if ($stock <= 0) { ?>
                                                                 <span class="product_status outof_stock">
                                                                     <label>Out of stock</label>
@@ -509,7 +509,7 @@
                                                     </p>
 
                                                     <?php
-                                                    $stock = $product[$i]['quantity'];
+                                                    $stock = $similar[$i]['quantity'];
                                                     if ($stock <= 0) { ?>
                                                         <div>
                                                             <a class="btn-main buynow_btn"
@@ -630,7 +630,7 @@
                                                                 <p class="d-flex wish-status">
                                                                     <span class="d-flex align-items-center similar-products">
                                                                         <?php
-                                                                        $stock = $product[$i]['quantity'];
+                                                                        $stock = $similarProducts[$i]['quantity'];
                                                                         if ($stock <= 0) { ?>
                                                                             <span class="product_status outof_stock">
                                                                                 <label>Out of stock</label>
@@ -645,7 +645,7 @@
                                                                 </p>
 
                                                                 <?php
-                                                                $stock = $product[$i]['quantity'];
+                                                                $stock = $similarProducts[$i]['quantity'];
                                                                 if ($stock <= 0) { ?>
                                                                     <div>
                                                                         <a class="btn-main buynow_btn"
@@ -753,7 +753,7 @@
                                                     <p class="d-flex wish-status">
                                                         <span class="d-flex align-items-center similar-products">
                                                             <?php
-                                                            $stock = $product[$i]['quantity'];
+                                                            $stock = $recent_products[$i]['quantity'];
                                                             if ($stock <= 0) { ?>
                                                                 <span class="product_status outof_stock">
                                                                     <label>Out of stock</label>
@@ -768,7 +768,7 @@
                                                     </p>
 
                                                     <?php
-                                                    $stock = $product[$i]['quantity'];
+                                                    $stock = $recent_products[$i]['quantity'];
                                                     if ($stock <= 0) { ?>
                                                         <div>
                                                             <a class="btn-main buynow_btn"

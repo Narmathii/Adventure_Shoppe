@@ -199,7 +199,14 @@ class SearchController extends BaseController
         $maxPrice = $this->request->getPost('maximum_price');
         $available = $this->request->getPost('available');
         $brand = $this->request->getPost('brand');
-        $orderby = $this->request->getPost('orderby');
+        $orderby_web = $this->request->getPost('orderby_web');
+        $orderby_mob = $this->request->getPost('orderby_mob');
+
+        $tablename = $this->request->getPost('tablename');
+
+        $discount = $this->request->getPost('discount');
+        $discount_mob = $this->request->getPost('discount_mob');
+
 
 
 
@@ -234,9 +241,61 @@ class SearchController extends BaseController
         }
 
 
-        if (isset($orderby) && !empty($orderby)) {
-            $orderr = ($orderby == 0) ? "ASC" : "DESC";
-            $query .= " ORDER BY a.product_name " . $orderr;
+        if ($discount != 0) {
+            $lowDisc = $discount;
+            $highDisc = $discount + 9;
+            $query .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
+
+
+        if ($discount_mob != 0) {
+            $lowDisc = $discount_mob;
+            $highDisc = $discount_mob + 9;
+            $query .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
+
+
+
+        if ($orderby_web == "") {
+            $query .= "";
+        } else if (isset($orderby_web) && !empty($orderby_web)) {
+            if ($orderby_web != 0 || $orderby_web != '') {
+                if ($orderby_web == 'ASC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_web == 'DESC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_web == 'HIGH') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_web == 'LOW') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
+        }
+
+        if ($orderby_mob == "") {
+            $query .= "";
+        } else if (isset($orderby_mob) && !empty($orderby_mob)) {
+            if ($orderby_mob != 0 || $orderby_mob != '') {
+                if ($orderby_mob == 'ASC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_mob == 'DESC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_mob == 'HIGH') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_mob == 'LOW') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
         }
 
 
@@ -254,14 +313,18 @@ class SearchController extends BaseController
         $db = \Config\Database::connect();
         $data = $this->request->getPost();
 
-
         $minPrice = $this->request->getPost('minimum_price');
         $maxPrice = $this->request->getPost('maximum_price');
         $available = $this->request->getPost('available');
         $brand = $this->request->getPost('brand');
-        $orderby = $this->request->getPost('orderby');
+        $orderby_web = $this->request->getPost('orderby_web');
+        $orderby_mob = $this->request->getPost('orderby_mob');
+
         $tablename = $this->request->getPost('tablename');
         $submenu_id = $this->request->getPost('submenu_id');
+        $discount = $this->request->getPost('discount');
+        $discount_mob = $this->request->getPost('discount_mob');
+
 
 
         $submenuMap = [
@@ -300,15 +363,65 @@ class SearchController extends BaseController
             $query .= " AND search_brand IN('" . $brandFiltr . "')";
         }
 
+        if ($discount != 0) {
+            $lowDisc = $discount;
+            $highDisc = $discount + 9;
+            $query .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
 
-        if ($orderby == "") {
+
+        if ($discount_mob != 0) {
+            $lowDisc = $discount_mob;
+            $highDisc = $discount_mob + 9;
+            $query .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
+
+
+
+        if ($orderby_web == "") {
             $query .= "";
-        } else if (isset($orderby) && !empty($orderby)) {
-            $orderr = ($orderby == 0) ? "ASC " : "DESC";
-            $query .= "ORDER BY product_name " . $orderr;
+        } else if (isset($orderby_web) && !empty($orderby_web)) {
+            if ($orderby_web != 0 || $orderby_web != '') {
+                if ($orderby_web == 'ASC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_web == 'DESC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_web == 'HIGH') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_web == 'LOW') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
+        }
+
+        if ($orderby_mob == "") {
+            $query .= "";
+        } else if (isset($orderby_mob) && !empty($orderby_mob)) {
+            if ($orderby_mob != 0 || $orderby_mob != '') {
+                if ($orderby_mob == 'ASC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_mob == 'DESC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_mob == 'HIGH') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_mob == 'LOW') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
         }
 
         $resultData = $db->query($query)->getResultArray();
+
 
         echo json_encode($resultData);
     }
@@ -318,66 +431,111 @@ class SearchController extends BaseController
     {
 
         $db = \Config\Database::connect();
+        $data = $this->request->getPost();
+
         $minPrice = $this->request->getPost('minimum_price');
         $maxPrice = $this->request->getPost('maximum_price');
         $available = $this->request->getPost('available');
         $brand = $this->request->getPost('brand');
-        $orderby = $this->request->getPost('orderby');
+        $discount = $this->request->getPost('discount');
+        $discount_mob = $this->request->getPost('discount_mob');
+        $orderby_web = $this->request->getPost('orderby_web');
+        $orderby_mob = $this->request->getPost('orderby_mob');
+
 
         $query = "SELECT *
         FROM (
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_products
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products', $discount, $discount_mob) . "
             
             UNION 
             
             SELECT * ,offer_type AS otype , offer_price AS oprice
             FROM tbl_accessories_list
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list', $discount, $discount_mob) . "
             
             UNION 
             
             SELECT * ,offer_type AS otype , offer_price AS oprice
             FROM tbl_helmet_products
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products', $discount, $discount_mob) . "
             
             UNION 
             
             SELECT * ,offer_type AS otype , offer_price AS oprice
             FROM tbl_luggagee_products
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products', $discount, $discount_mob) . "
             
             UNION 
             
             SELECT * ,offer_type AS otype , offer_price AS oprice
             FROM tbl_rproduct_list
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list', $discount, $discount_mob) . "
             
             UNION
             
             SELECT * ,offer_type AS otype , offer_price AS oprice
             FROM tbl_camping_products
             WHERE flag = 1 AND offer_type = 0
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products', $discount, $discount_mob) . "
         ) AS combined_results
     ";
 
-        if (!empty($orderby)) {
-            $query .= " ORDER BY product_name {$orderby}";
+        if ($orderby_web == "") {
+            $query .= "";
+        } else if (isset($orderby_web) && !empty($orderby_web)) {
+            if ($orderby_web != 0 || $orderby_web != '') {
+                if ($orderby_web == 'ASC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_web == 'DESC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_web == 'HIGH') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_web == 'LOW') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
         }
+
+        if ($orderby_mob == "") {
+            $query .= "";
+        } else if (isset($orderby_mob) && !empty($orderby_mob)) {
+            if ($orderby_mob != 0 || $orderby_mob != '') {
+                if ($orderby_mob == 'ASC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_mob == 'DESC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_mob == 'HIGH') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_mob == 'LOW') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
+        }
+
         $resultData = $db->query($query)->getResultArray();
         echo json_encode($resultData);
     }
 
 
     // filter function for all tables
-    private function buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, $tableAlias)
+    private function buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, $tableAlias, $discount, $discount_mob)
     {
         $conditions = "";
         if (isset($minPrice, $maxPrice) && !empty($minPrice) && !empty($maxPrice)) {
@@ -397,6 +555,18 @@ class SearchController extends BaseController
             $placeholders = implode("','", $brand);
             $conditions .= " AND {$tableAlias}.search_brand IN ('{$placeholders}')";
         }
+        if (isset($discount) && !empty($discount)) {
+
+            $lowDisc = $discount;
+            $highDisc = $discount + 9;
+            $conditions .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
+        if (isset($discount_mob) && !empty($discount_mob)) {
+
+            $lowDisc = $discount_mob;
+            $highDisc = $discount_mob + 9;
+            $conditions .= " AND offer_details>=$lowDisc  AND offer_details <= $highDisc ";
+        }
 
         return $conditions;
     }
@@ -410,54 +580,97 @@ class SearchController extends BaseController
         $maxPrice = $this->request->getPost('maximum_price');
         $available = $this->request->getPost('available');
         $brand = $this->request->getPost('brand');
-        $orderby = $this->request->getPost('orderby');
+        $discount = $this->request->getPost('discount');
+        $discount_mob = $this->request->getPost('discount_mob');
+        $orderby_web = $this->request->getPost('orderby_web');
+        $orderby_mob = $this->request->getPost('orderby_mob');
 
         $query = "SELECT *
         FROM (
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_products
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_accessories_list
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_helmet_products
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_luggagee_products
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_rproduct_list
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_camping_products
             WHERE flag = 1 AND arrival_status = 1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products', $discount, $discount_mob) . "
         ) AS combined_results
     ";
-        if (!empty($orderby)) {
-            $query .= " ORDER BY product_name {$orderby}";
+        if ($orderby_web == "") {
+            $query .= "";
+        } else if (isset($orderby_web) && !empty($orderby_web)) {
+            if ($orderby_web != 0 || $orderby_web != '') {
+                if ($orderby_web == 'ASC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_web == 'DESC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_web == 'HIGH') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_web == 'LOW') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
         }
+
+        if ($orderby_mob == "") {
+            $query .= "";
+        } else if (isset($orderby_mob) && !empty($orderby_mob)) {
+            if ($orderby_mob != 0 || $orderby_mob != '') {
+                if ($orderby_mob == 'ASC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_mob == 'DESC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_mob == 'HIGH') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_mob == 'LOW') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
+        }
+
+
         $resultData = $db->query($query)->getResultArray();
         echo json_encode($resultData);
     }
@@ -472,53 +685,94 @@ class SearchController extends BaseController
         $brand = $this->request->getPost('brand');
         $orderby = $this->request->getPost('orderby');
         $tablename = $this->request->getPost('tablename');
-
+        $discount = $this->request->getPost('discount');
+        $discount_mob = $this->request->getPost('discount_mob');
+        $orderby_web = $this->request->getPost('orderby_web');
+        $orderby_mob = $this->request->getPost('orderby_mob');
 
         $query = "SELECT *
         FROM (
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_products
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_accessories_list
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_accessories_list', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_helmet_products
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_helmet_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_luggagee_products
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_luggagee_products', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_rproduct_list
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_rproduct_list', $discount, $discount_mob) . "
             
             UNION ALL
             
             SELECT *, offer_type AS otype , offer_price AS oprice
             FROM tbl_camping_products
             WHERE flag = 1 AND `hot_sale` =  1
-            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products') . "
+            " . $this->buildAdditionalConditions($minPrice, $maxPrice, $available, $brand, 'tbl_camping_products', $discount, $discount_mob) . "
         ) AS combined_results
     ";
-        if (!empty($orderby)) {
-            $query .= " ORDER BY product_name {$orderby}";
+        if ($orderby_web == "") {
+            $query .= "";
+        } else if (isset($orderby_web) && !empty($orderby_web)) {
+            if ($orderby_web != 0 || $orderby_web != '') {
+                if ($orderby_web == 'ASC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_web == 'DESC') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_web == 'HIGH') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_web == 'LOW') {
+                    $orderby_res = $orderby_web;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
+        }
+
+        if ($orderby_mob == "") {
+            $query .= "";
+        } else if (isset($orderby_mob) && !empty($orderby_mob)) {
+            if ($orderby_mob != 0 || $orderby_mob != '') {
+                if ($orderby_mob == 'ASC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name ASC";
+                } else if ($orderby_mob == 'DESC') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY product_name DESC";
+                } else if ($orderby_mob == 'HIGH') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price DESC";
+                } else if ($orderby_mob == 'LOW') {
+                    $orderby_res = $orderby_mob;
+                    $query .= " ORDER BY offer_price ASC";
+                }
+            }
+
         }
         $resultData = $db->query($query)->getResultArray();
         echo json_encode($resultData);

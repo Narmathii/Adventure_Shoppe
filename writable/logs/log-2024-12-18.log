@@ -1,0 +1,306 @@
+ERROR - 2024-12-18 09:45:12 --> mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5 in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(306): mysqli->query('SELECT\r\n       ...', 0)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT\r\n       ...')
+#2 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT\r\n       ...')
+#3 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT\r\n       ...')
+#4 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+#5 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#8 {main}
+CRITICAL - 2024-12-18 09:45:12 --> CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\BaseConnection.php on line 647.
+ 1 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-18 09:45:12 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 311.
+ 1 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 3 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 4 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 5 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-18 09:45:12 --> [Caused by] mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 306.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(306): mysqli->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 4 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 5 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 6 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 7 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+ERROR - 2024-12-18 09:45:16 --> mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5 in C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php:306
+Stack trace:
+#0 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\MySQLi\Connection.php(306): mysqli->query('SELECT\r\n       ...', 0)
+#1 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT\r\n       ...')
+#2 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT\r\n       ...')
+#3 C:\xampp\htdocs\ci4projects\adventure_final\app\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT\r\n       ...')
+#4 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+#5 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+#6 C:\xampp\htdocs\ci4projects\adventure_final\vendor\codeigniter4\framework\system\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#7 C:\xampp\htdocs\ci4projects\adventure_final\index.php(79): CodeIgniter\CodeIgniter->run()
+#8 {main}
+CRITICAL - 2024-12-18 09:45:16 --> CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\BaseConnection.php on line 647.
+ 1 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-18 09:45:16 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 311.
+ 1 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 3 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 4 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 5 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 6 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-18 09:45:16 --> [Caused by] mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'DATE_FORMAT(a.delivery_date, '%d-%m-%Y')  AS deliverydate 
+        FROM
+   ...' at line 5
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 306.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(306): mysqli->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(693): CodeIgniter\Database\MySQLi\Connection->execute('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(607): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 4 APPPATH\Controllers\admin\DashboardController.php(222): CodeIgniter\Database\BaseConnection->query('SELECT
+            a.*,
+            b.*,
+            DATE_FORMAT(a.order_date, \'%d-%m-%Y\') AS DATE
+          DATE_FORMAT(a.delivery_date, \'%d-%m-%Y\')  AS deliverydate 
+        FROM
+            tbl_orders AS a
+        INNER JOIN tbl_users AS b
+        ON
+            a.`user_id` = b.user_id
+        WHERE
+            a.flag = 1 AND  b.flag = 1 AND a.delivery_status = 6
+        ORDER BY
+            `order_date` ASC')
+ 5 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\DashboardController->getcancelledOrder()
+ 6 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\DashboardController))
+ 7 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-18 17:27:04 --> ErrorException: array_merge(): Expected parameter 1 to be an array, null given
+in APPPATH\Controllers\Home.php on line 672.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'array_merge(): Expected parameter 1 to be an array, null given', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\Home.php', 672, [...])
+ 2 APPPATH\Controllers\Home.php(672): array_merge(null, [...])
+ 3 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\Home->accessoriesDetail('hr-h', 'hr-h')
+ 4 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Home))
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()

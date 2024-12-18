@@ -33,7 +33,7 @@ class Database extends Config
         'hostname' => 'localhost',
         'username' => 'root',
         'password' => '',
-        'database' => 'adv',
+        'database' => 'adv_live',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,

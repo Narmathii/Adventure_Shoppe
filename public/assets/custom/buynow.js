@@ -284,10 +284,14 @@ $(document).ready(function () {
     let courier = $("#courier-charge").text();
     let courierCharge = courier.replace("₹", "");
 
+
+    let State = $("#cart-state-id").val();
+    let CourierType = $('input[name="courier_option"]:checked').val();
+
     $.ajax({
       type: "POST",
       url: base_Url + "buynow-checkout",
-      data: { totalamt: Amtt, courierCharge: courierCharge },
+      data: { totalamt: Amtt, courierCharge: courierCharge,stateid :  State,courier_type :CourierType },
       dataType: "json",
       success: function (data) {
         if (data.code == 200) {

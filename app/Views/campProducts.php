@@ -27,14 +27,23 @@ require("components/head.php");
         }
     }
 
-    .orderby {
+    .orderby,
+    .discount,
+    .orderby_web,
+    .orderby_mob,
+    .discount_mob {
 
         width: 100%;
-        padding: 3%;
+        padding: 1.5%;
         color: #000;
+        border-radius: 10px;
     }
 
-    .orderby>option {
+    .orderby>option,
+    .discount>option,
+    .orderby_web>option,
+    .orderby_mob>option,
+    .discount_mob>option {
         color: #000 !important
     }
 </style>
@@ -64,10 +73,10 @@ require("components/head.php");
         </section> -->
         <!-- section close -->
         <section id="section-cars" class="products_wrapper">
-            <div class="container">
+            <div class="container access_list_grid">
                 <div class="row">
                     <h2 class="text-center">
-                        <?php echo $product[0]['c_submenu'] ?>
+                        <?php echo strtoupper($product[0]['c_submenu']) ?>
                     </h2>
                     <!-- mobile view filter -->
                     <span class="filter_sm d-lg-none">
@@ -78,6 +87,7 @@ require("components/head.php");
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
                         aria-labelledby="offcanvasRightLabel">
                         <div class="offcanvas-header">
+
                             <h5 id="offcanvasRightLabel" class="mb-0">Filter</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
@@ -95,13 +105,13 @@ require("components/head.php");
                                     <div class="price-wrap">
                                         <span class="min-max">Min</span>
                                         <div class="price-wrap-1">
-                                            <input id="mob_one">
+                                            <input id="mob_one" readonly>
                                             <label for="one"></label>
                                         </div>
                                         <div class="price-wrap_line">-</div>
                                         <span class="min-max">Max</span>
                                         <div class="price-wrap-2">
-                                            <input id="mob_two">
+                                            <input id="mob_two" readonly>
                                             <label for="two"></label>
                                         </div>
                                     </div>
@@ -111,12 +121,27 @@ require("components/head.php");
 
                             <div class="item_filter_group">
                                 <h4>Sort By</h4>
-                                <select class="common_selector orderby" aria-label="Default select example">
+                                <select class="common_selector orderby_mob" aria-label="Default select example">
                                     <option value="0">Select Option</option>
                                     <option value="ASC">Order by A-Z</option>
                                     <option value="DESC">Order by Z-A</option>
+                                    <option value="LOW">Low to High</option>
+                                    <option value="HIGH">High to Low</option>
                                 </select>
                             </div>
+
+
+                            <div class="item_filter_group">
+                                <h4>Discount</h4>
+                                <select class="common_selector discount_mob" aria-label="Default select example">
+                                    <option value="0">Select Discount</option>
+                                    <option value="10">10% or more</option>
+                                    <option value="20">20% or more</option>
+                                    <option value="30">30% or more</option>
+                                    <option value="40">40% or more</option>
+                                </select>
+                            </div>
+
 
                             <div class="item_filter_group">
                                 <h4>Availabilty</h4>
@@ -150,15 +175,18 @@ require("components/head.php");
                                     <?php } ?>
                                 </div>
                             </div>
-                            <input type="hidden" class="common_selector submenuid"
-                                value="<?php echo $product[0]['c_submenu_id'] ?>" />
 
+                            <input type="hidden" class="common_selector submenuid"
+                                value="<?php echo $product[0]['c_submenu_id'] ?>" ?>" />
                         </div>
                     </div>
 
 
+
+
                     <!-- web view filter -->
                     <div class="col-lg-3 filter_lg">
+                        <h5 id="web_filter" class="mb-0">Filter</h5>
                         <div class="item_filter_group">
                             <h4>Price (₹)</h4>
                             <fieldset class="filter-price">
@@ -171,13 +199,13 @@ require("components/head.php");
                                 <div class="price-wrap">
                                     <span class="min-max">Min</span>
                                     <div class="price-wrap-1">
-                                        <input id="web_one">
+                                        <input id="web_one" readonly>
                                         <label for="one"></label>
                                     </div>
                                     <div class="price-wrap_line">-</div>
                                     <span class="min-max">Max</span>
                                     <div class="price-wrap-2">
-                                        <input id="web_two">
+                                        <input id="web_two" readonly>
                                         <label for="two"></label>
                                     </div>
                                 </div>
@@ -187,12 +215,26 @@ require("components/head.php");
 
                         <div class="item_filter_group">
                             <h4>Sort By</h4>
-                            <select class="common_selector orderby" aria-label="Default select example">
+                            <select class="common_selector orderby_web" aria-label="Default select example">
                                 <option value="0">Select Option</option>
                                 <option value="ASC">Order by A-Z</option>
                                 <option value="DESC">Order by Z-A</option>
+                                <option value="LOW">Low to High</option>
+                                <option value="HIGH">High to Low</option>
                             </select>
                         </div>
+
+                        <div class="item_filter_group">
+                            <h4>Discount</h4>
+                            <select class="common_selector discount" aria-label="Default select example">
+                                <option value="0">Select Discount</option>
+                                <option value="10">10% or more</option>
+                                <option value="20">20% or more</option>
+                                <option value="30">30% or more</option>
+                                <option value="40">40% or more</option>
+                            </select>
+                        </div>
+
 
                         <div class="item_filter_group">
                             <h4>Availabilty</h4>
@@ -208,8 +250,6 @@ require("components/head.php");
                                         type="checkbox" value="0">
                                     <label for="web_outofstock">Out Of Stock</label>
                                 </div>
-
-
                             </div>
                         </div>
                         <div class="item_filter_group">
@@ -230,6 +270,7 @@ require("components/head.php");
                             value="<?php echo $product[0]['c_submenu_id'] ?>" />
                     </div>
 
+
                     <div class="col-lg-9">
                         <div class="row seach_results">
 
@@ -244,7 +285,7 @@ require("components/head.php");
                                 </div>
                             <?php } else { ?>
                                 <?php for ($i = 0; $i < count($product); $i++) { ?>
-                                    <div class="col-12 col-lg-4 productCard">
+                                    <div class="col-12 col-lg-3 productCard">
                                         <form>
 
                                             <div class="de-item mb30">
@@ -370,7 +411,15 @@ require("components/head.php");
                     }
                     var available = get_filter('available');
                     var brand = get_filter('brand');
-                    var orderby = $('.orderby').val();
+
+                    var orderby_web = $('.orderby_web').val();
+                    var orderby_mob = $('.orderby_mob').val();
+
+                    var discount = $('.discount').val();
+                    var discount_mob = $('.discount_mob').val();
+
+
+
                     var tablename = 'tbl_camping_products';
                     var submenu_id = $('.submenuid').val();
 
@@ -383,9 +432,13 @@ require("components/head.php");
                             maximum_price: maximum_price,
                             available: available,
                             brand: brand,
-                            orderby: orderby,
+                            orderby_web: orderby_web,
                             tablename: tablename,
-                            submenu_id: submenu_id
+                            submenu_id: submenu_id,
+                            discount: discount,
+                            orderby_mob: orderby_mob,
+                            discount_mob: discount_mob
+
                         },
                         success: function (data) {
                             let count = data.length;
@@ -464,7 +517,7 @@ require("components/head.php");
                                                 `;
                                     }
                                     searchResults += `
-                    <div class="col-12 col-lg-4 productCard mb-4">
+                    <div class="col-12 col-lg-3 productCard mb-4">
                     <form>
                         
                             <div class="de-item">

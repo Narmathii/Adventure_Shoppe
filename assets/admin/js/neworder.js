@@ -163,6 +163,44 @@ $(document).ready(function () {
   }
   // *************************** [Change delivery status] *************************************************************************
 
+  $("#delivery_status").on("change", function () {
+    var delivery_status = $("#delivery_status").val();
+    if (delivery_status == 6) {
+      $("#delivery-status").modal("hide");
+      $("#cancel_product_modal").modal("show");
+    }
+  });
+
+  // Cancel Reason
+  $("#submit-reason").click(function () {
+    var delivery_status = $("#delivery_status").val();
+    let cancelReason = $("#cancel_reason").val();
+
+    $.ajax({
+      type: "post",
+      url: base_Url + "update-cancel-reason",
+      data: {
+        order_id: orderID,
+        cancelReason: cancelReason,
+        delivery_status: delivery_status,
+      },
+      dataType: "json",
+
+      success: function (data) {
+        if (data.code == 200) {
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Failure",
+            text: data.msg,
+            icon: "error",
+          });
+          $("#delivery-status").modal("hide");
+        }
+      },
+    });
+  });
+
   $(document).on("click", ".BtnOrdersts", function () {
     $("#delivery-status").modal("show");
 
@@ -172,7 +210,6 @@ $(document).ready(function () {
 
   $("#submit-status").click(function () {
     var delivery_status = $("#delivery_status").val();
-
     $.ajax({
       type: "post",
       url: base_Url + "update-delivery-status",
@@ -301,6 +338,9 @@ $(document).ready(function () {
 
         // Address
         $("#user-name").html(viewOrder[0]["username"]);
+        $("#email-data").html(viewOrder[0]["email"]);
+
+        
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );

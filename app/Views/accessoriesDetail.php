@@ -495,7 +495,7 @@
                                                     <p class="d-flex wish-status">
                                                         <span class="d-flex align-items-center similar-products">
                                                             <?php
-                                                            $stock = $product[$i]['quantity'];
+                                                            $stock = $similar[$i]['quantity'];
                                                             if ($stock <= 0) { ?>
                                                                 <span class="product_status outof_stock">
                                                                     <label>Out of stock</label>
@@ -510,7 +510,7 @@
                                                     </p>
 
                                                     <?php
-                                                    $stock = $product[$i]['quantity'];
+                                                    $stock = $similar[$i]['quantity'];
                                                     if ($stock <= 0) { ?>
                                                         <div>
                                                             <a class="btn-main buynow_btn"
@@ -587,7 +587,7 @@
                             <div class="item">
                                 <div class="">
 
-                                <a href="<?php echo base_url() ?>accessories-detail/<?php echo strtolower(str_replace(' ', '-', $similarProducts[$i]['redirect_url'])) ?>/<?php echo base64_encode($similarProducts[$i]['prod_id']) ?>"></a>
+                                <a href="<?php echo base_url() ?>accessories-detail/<?php echo strtolower(str_replace(' ', '-', $similarProducts[$i]['redirect_url'])) ?>/<?php echo base64_encode($similarProducts[$i]['prod_id']) ?>">
                                                     <div class="de-item">
                                                        <?php
                                                         $offer =  $similarProducts[$i]['offer_details'];
@@ -632,7 +632,7 @@
                                                                 <p class="d-flex wish-status">
                                                                     <span class="d-flex align-items-center similar-products">
                                                                         <?php
-                                                                        $stock = $product[$i]['quantity'];
+                                                                        $stock = $similarProducts[$i]['quantity'];
                                                                         if ($stock <= 0) { ?>
                                                                             <span class="product_status outof_stock">
                                                                                 <label>Out of stock</label>
@@ -647,7 +647,7 @@
                                                                 </p>
 
                                                                 <?php
-                                                                $stock = $product[$i]['quantity'];
+                                                                $stock = $similarProducts[$i]['quantity'];
                                                                 if ($stock <= 0) { ?>
                                                                     <div>
                                                                         <a class="btn-main buynow_btn"
@@ -761,7 +761,7 @@
                                                     <p class="d-flex wish-status">
                                                         <span class="d-flex align-items-center similar-products">
                                                             <?php
-                                                            $stock = $product[$i]['quantity'];
+                                                            $stock = $recent_products[$i]['quantity'];
                                                             if ($stock <= 0) { ?>
                                                                 <span class="product_status outof_stock">
                                                                     <label>Out of stock</label>
@@ -776,7 +776,7 @@
                                                     </p>
 
                                                     <?php
-                                                    $stock = $product[$i]['quantity'];
+                                                    $stock = $recent_products[$i]['quantity'];
                                                     if ($stock <= 0) { ?>
                                                         <div>
                                                             <a class="btn-main buynow_btn"
