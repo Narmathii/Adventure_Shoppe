@@ -829,6 +829,8 @@ AND `flag` = 1;
 
         $res['sub_id'] = $subID;
 
+       
+
 
         return view('ridingAccessories', $res);
     }

@@ -1,0 +1,8 @@
+CRITICAL - 2024-12-20 11:57:48 --> ErrorException: array_merge(): Expected parameter 2 to be an array, null given
+in APPPATH\Controllers\admin\WishlistController.php on line 70.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(2, 'array_merge(): Expected parameter 2 to be an array, null given', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\WishlistController.php', 70, [...])
+ 2 APPPATH\Controllers\admin\WishlistController.php(70): array_merge([...], null)
+ 3 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\WishlistController->getWishlistData()
+ 4 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\WishlistController))
+ 5 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()

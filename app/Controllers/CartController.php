@@ -43,7 +43,6 @@ class CartController extends BaseController
         $db = \Config\Database::connect();
         $res = $this->headerlist();
 
-
         // to get cart count 
         $userID = session()->get('user_id');
 
@@ -57,7 +56,10 @@ class CartController extends BaseController
         }
         // end cart count
 
+        $q1 = "SELECT COUNT(cart_id) AS totl_item FROM `tbl_user_cart` WHERE `user_id` = ?  AND `flag` = 1";
+        $getData = $db->query($q1, [$userID])->getRow();
 
+        $res['total_items'] = $getData->totl_item;
         // Get cart details
         $query = "SELECT `table_name`,`prod_id`,color,size FROM `tbl_user_cart` WHERE `flag`= 1 AND  user_id = ?";
         $cartDetail = $db->query($query, [$userID])->getResultArray();
@@ -96,6 +98,7 @@ class CartController extends BaseController
 
         $res['address'] = $db->query($addressQry, [$userID])->getResultArray();
 
+
         $stateqry = "SELECT `state_id` FROM `tbl_user_address` WHERE `default_addr` = 1 AND `flag` = 1 AND user_id = ?";
 
         $res['defaultState'] = $db->query($stateqry, [$userID])->getResultArray();
@@ -111,6 +114,35 @@ class CartController extends BaseController
 
 
         return view('cartList', $res);
+    }
+
+    public function changeAddress()
+    {
+
+        $db = \Config\Database::connect();
+        $addID = $this->request->getPost('add_id');
+
+
+
+        $query = "SELECT a.* , b.state_title, c.dist_name   FROM `tbl_user_address` AS a 
+                  INNER JOIN  tbl_state AS b ON a.state_id = b.state_id 
+                  INNER JOIN tbl_district AS c ON a.dist_id = c.dist_id
+                  WHERE a.`add_id` = ? AND a.`flag` = 1;";
+        $getAddress = $db->query($query, [$addID])->getResultArray();
+
+        return json_encode($getAddress);
+
+    }
+
+    public function updateCartAddress()
+    {
+        $db = \Config\Database::connect();
+
+        $data = $this->request->getPost();
+        echo "<pre>";
+        print_r($data);
+        die;
+
     }
 
 
@@ -150,7 +182,6 @@ class CartController extends BaseController
         $size_Stock = $this->request->getPost('size_stock');
 
 
-
         if ($size == "") {
             $hexCode = 0;
             $size = 0;
@@ -163,9 +194,24 @@ class CartController extends BaseController
         $cartID = $getResult[0]['cart_id'];
 
 
+        // getOrginal Products Price 
+        $q1 = "SELECT `offer_price` ,`quantity`  FROM $tblName WHERE  `flag` = 1 AND `prod_id` = ?";
+        $getOriginalProducts = $db->query($q1, [$prodID])->getRow();
+
+        $OriginalPrice = $getOriginalProducts->offer_price;
+        $OriginalQty = $getOriginalProducts->quantity;
+
+
+
         if (count($getResult) > 0) {
 
-            $proPrice = number_format((float) $prodPrice, 2, '.', '');
+            if ($prodPrice == $OriginalPrice && $qty <= $OriginalQty) {
+                $finalProdPrice = $prodPrice;
+            } else {
+                $finalProdPrice = $OriginalPrice;
+            }
+
+            $proPrice = number_format((float) $finalProdPrice, 2, '.', '');
             $totalAmt = $proPrice * $qty;
             $subTotal = number_format((float) $totalAmt, 2, '.', '');
 
@@ -205,9 +251,17 @@ class CartController extends BaseController
 
 
         } else {
-            $prodPrice = number_format((float) $prodPrice, 2, '.', '');
+
+            if ($prodPrice == $OriginalPrice && $qty <= $OriginalQty) {
+                $finalProdPrice = $prodPrice;
+            } else {
+                $finalProdPrice = $OriginalPrice;
+            }
+
+            $prodPrice = number_format((float) $finalProdPrice, 2, '.', '');
             $totalAmt = $prodPrice * $qty;
             $subTotal = number_format((float) $totalAmt, 2, '.', '');
+
 
             $insert = [
                 'user_id' => $userID,
@@ -330,6 +384,8 @@ class CartController extends BaseController
         $getAddr = $db->query($query, [$userID])->getResult();
 
 
+
+
         if (count($getAddr) > 0) {
             $oldID = $getAddr[0]->add_id;
 
@@ -352,8 +408,20 @@ class CartController extends BaseController
 
             }
         } else {
+            $query = "SELECT * FROM `tbl_user_address` WHERE `flag` = 1 AND `user_id` = ?";
+            $getAddr = $db->query($query, [$userID])->getResult();
+
+            if ($getAddr > 0) {
+                $query = "UPDATE tbl_user_address SET default_addr = 1 WHERE add_id = ? AND user_id = ?";
+                $updateAddrr = $db->query($query, [$addrID, $userID]);
+            }
+
+
+            $getDistID = $db->query("SELECT `dist_id`, `state_id` FROM `tbl_user_address` WHERE `default_addr` =  1 AND `user_id` = $userID  AND `flag` = 1")->getRow();
             $res['code'] = 200;
-            $res['msg'] = "No change in address ";
+            $res['msg'] = "Default address changed";
+            $res['dist_id'] = $getDistID->dist_id;
+            $res['state_id'] = $getDistID->state_id;
         }
         echo json_encode($res);
     }
@@ -412,7 +480,7 @@ class CartController extends BaseController
 
         $finalCharge = ceil($total);
 
-    
+
         // $finalCharge = 1;
         echo json_encode($finalCharge);
     }

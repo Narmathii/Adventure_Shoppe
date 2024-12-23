@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-require ("components/head.php");
+require("components/head.php");
 ?>
 <style>
     #products_page .de-item .d-img img {
@@ -37,7 +37,7 @@ require ("components/head.php");
 
 <body id="products_page" class="dark-scheme">
     <?php
-    require ("components/header.php");
+    require("components/header.php");
     ?>
     <!-- content begin -->
 
@@ -237,7 +237,7 @@ require ("components/head.php");
                     <div class="col-lg-9">
                         <div class="row seach_results">
                             <?php for ($i = 0; $i < count($hotsale); $i++) { ?>
-                                <div class="col-12 col-lg-4 productCard mb-4">
+                                <div class="col-12 col-lg-3 productCard mb-4">
 
                                     <div class="de-item">
                                         <!-- wishlist  start -->
@@ -342,7 +342,7 @@ require ("components/head.php");
 
         <!-- content close -->
         <?php
-        require ("components/footer.php");
+        require("components/footer.php");
         ?>
 
         <script>
@@ -352,7 +352,7 @@ require ("components/head.php");
                     var maximum_price = $('#max-price').val();
                     var available = get_filter('available');
                     var brand = get_filter('brand');
-                    
+
                     var orderby_web = $('.orderby_web').val();
                     var orderby_mob = $('.orderby_mob').val();
 
@@ -372,7 +372,7 @@ require ("components/head.php");
                             brand: brand,
                             orderby_web: orderby_web,
                             tablename: tablename,
-                          
+
                             discount: discount,
                             orderby_mob: orderby_mob,
                             discount_mob: discount_mob
@@ -448,7 +448,9 @@ require ("components/head.php");
 
 
                                     searchResults += `
-                    <div class="col-12 col-lg-4 productCard mb-4">
+                    <div class="col-12 col-lg-3
+                    
+                    productCard mb-4">
                     <form>
                        
                             <div class="de-item">

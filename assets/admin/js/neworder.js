@@ -188,6 +188,13 @@ $(document).ready(function () {
 
       success: function (data) {
         if (data.code == 200) {
+          Swal.fire({
+            title: "Success",
+            text: data.msg,
+            icon: "success",
+          });
+          $("#delivery-status").modal("hide");
+          $("#cancel_product_modal").modal("hide");
           location.reload();
         } else {
           Swal.fire({
@@ -196,6 +203,7 @@ $(document).ready(function () {
             icon: "error",
           });
           $("#delivery-status").modal("hide");
+          $("#cancel_product_modal").modal("hide");
         }
       },
     });
@@ -340,7 +348,6 @@ $(document).ready(function () {
         $("#user-name").html(viewOrder[0]["username"]);
         $("#email-data").html(viewOrder[0]["email"]);
 
-        
         $("#address").html(
           viewOrder[0]["address"] + " ," + viewOrder[0]["landmark"]
         );

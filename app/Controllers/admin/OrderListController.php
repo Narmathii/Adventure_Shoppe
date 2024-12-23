@@ -88,6 +88,8 @@ class OrderListController extends BaseController
         $orderSummaries[$orderID] = $data;
 
         $res = $orderSummaries[$orderID];
+
+
         echo json_encode($res);
 
     }
@@ -195,6 +197,7 @@ class OrderListController extends BaseController
         $data = $this->request->getPost();
 
 
+
         $delivery_status = $this->request->getPost('delivery_status');
         $order_id = $this->request->getPost('order_id');
         $cancelReason = $this->request->getPost('cancelReason');
@@ -207,17 +210,6 @@ class OrderListController extends BaseController
                     cancel_reason = ?";
 
         $params = [$delivery_status, $delivery_message, $cancelReason];
-
-
-        if ($delivery_status == 2) {
-            $query .= ", order_date = NOW()";
-        } elseif ($delivery_status == 3) {
-            $query .= ", process_date = NOW()";
-        } elseif ($delivery_status == 4) {
-            $query .= ", shipped_date = NOW()";
-        } elseif ($delivery_status == 5) {
-            $query .= ", delivery_date = NOW()";
-        }
 
 
         $query .= " WHERE order_id = ?";
@@ -448,8 +440,13 @@ class OrderListController extends BaseController
 
         $db = \Config\Database::connect();
         $getData = $this->request->getPost();
+
+
         $payment_id = $this->request->getPost('payment_id');
         $order_id = $this->request->getPost('order_id');
+        $amount_type = $this->request->getPost('amount_type');
+
+
 
         $query = "SELECT `sub_total`,`courier_charge`  FROM `tbl_orders` WHERE flag =1 AND `order_id` =  ?";
         $getData = $db->query($query, [$order_id])->getRow();
@@ -462,10 +459,15 @@ class OrderListController extends BaseController
         $courier = (int) $courierCharge;
 
 
-        $RefundAmt = $total - $courier;
+        if ($amount_type == 0) {
+            $RefundAmt = $total - $courier;
+        } else if ($amount_type == 1) {
+            $RefundAmt = $total;
+        }
 
+        $refund = (int) ($RefundAmt);
 
-        if ($RefundAmt > $total) {
+        if ($refund > $total) {
 
 
             return json_encode([
@@ -501,19 +503,39 @@ class OrderListController extends BaseController
                 $response_data = json_decode($response, true);
 
 
-
                 if (isset($response_data['id']) && in_array($response_data['status'], ['created', 'processed'])) {
                     $deliveryStatus = ($response_data['status'] == 'created') ? 7 : 8;
                     $deliveryMessage = $deliveryStatus;
                     $refundID = $response_data['id'];
+                    $refundAmt = $response_data['amount'];
 
-                    $query = "UPDATE tbl_orders SET `delivery_status` = ?, `delivery_message` = ?, `refund_id` = ? WHERE order_id = ?";
-                    $UpdateStatus = $db->query($query, [$deliveryStatus, $deliveryMessage, $refundID, $order_id]);
+                    $totalRefund = $refundAmt / 100;
+
+
+
+                    $query = "UPDATE tbl_orders SET `delivery_status` = ?, `delivery_message` = ?, `refund_id` = ?,`refund_amt` = ? WHERE order_id = ?";
+                    $UpdateStatus = $db->query($query, [$deliveryStatus, $deliveryMessage, $refundID, $totalRefund, $order_id]);
 
                     if ($db->affectedRows() == 1) {
                         $res['code'] = 200;
                         $res['message'] = 'Refund is' . $response_data['status'];
                         $res['status'] = 'success';
+                    }
+                    echo json_encode($res);
+                } elseif (isset($response_data['id']) && $response_data['status'] == 'failed') {
+                    // Handle failed refunds
+                    $deliveryStatus = 9;
+                    $deliveryMessage = 9;
+                    $refundID = $response_data['id'];
+                    $refundAmt = $response_data['amount'];
+
+                    $query = "UPDATE tbl_orders SET `delivery_status` = ?, `delivery_message` = ?, `refund_id` = ?, `refund_amt` = ? WHERE order_id = ?";
+                    $UpdateStatus = $db->query($query, [$deliveryStatus, $deliveryMessage, $refundID, $refundAmt / 100, $order_id]);
+
+                    if ($db->affectedRows() == 1) {
+                        $res['code'] = 400;
+                        $res['message'] = 'Refund Failed';
+                        $res['status'] = 'error';
                     }
                     echo json_encode($res);
                 } else {
@@ -534,11 +556,13 @@ class OrderListController extends BaseController
     public function checkRefundStatus()
     {
         $db = \Config\Database::connect();
+
         $orderID = $this->request->getPost('order_id');
 
 
         $query = "SELECT `refund_id`  FROM `tbl_orders` WHERE `order_id` = ?";
         $getRefund = $db->query($query, [$orderID])->getRow();
+
 
         $refundID = $getRefund->refund_id;
 
@@ -546,9 +570,43 @@ class OrderListController extends BaseController
 
             $refund = $this->api->refund->fetch($refundID);
 
-            return $refund;
+            if ($refund) {
+                $refundStatus = $refund['status'];
+
+                if ($refundStatus == 'processed') {
+                    $deliveryStatus = 8;
+                    $deliveryMessage = 8;
+                } else if ($refundStatus == 'failed') {
+                    $deliveryStatus = 9;
+                    $deliveryMessage = 9;
+                } else if ($refundStatus == 'created') {
+                    $deliveryStatus = 7;
+                    $deliveryMessage = 7;
+                }
+
+                $query = "UPDATE tbl_orders SET `delivery_status` = ?, `delivery_message` = ? WHERE order_id = ? AND `refund_id` = ?";
+                $UpdateStatus = $db->query($query, [$deliveryStatus, $deliveryMessage, $orderID, $refundID]);
+
+                $affectedRows = $db->affectedRows();
+
+                if ($affectedRows == 1) {
+                    $res['code'] = 200;
+                    $res['message'] = 'Updated Successfully';
+                    $res['status'] = 'success';
+                } else {
+                    $res['code'] = 400;
+                    $res['message'] = 'Updated Failed';
+                    $res['status'] = 'failure';
+                }
+
+            }
+
+            return json_encode($res);
         } catch (\Exception $e) {
-            return ['error' => $e->getMessage()];
+            $res['code'] = 400;
+            $res['message'] = $e->getMessage();
+            $res['status'] = 'failure';
+            return json_encode($res);
         }
 
 

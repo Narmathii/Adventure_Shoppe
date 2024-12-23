@@ -49,6 +49,8 @@
                                                 <th>Product Name</th>
                                                 <th>Product Image</th>
                                                 <th>Total count</th>
+                                                <th>Username</th>
+                                                <th>Email</th>
                                             </tr>
                                         </thead>
                                         <tbody>

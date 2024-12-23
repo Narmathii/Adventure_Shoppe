@@ -2,9 +2,20 @@
   font-family: "poppins";
 } */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+@media (min-width: 1200px) {
+  .col-xl-12 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+    max-width: 93% !important;
+  }
+}
+.cartlist-container > .add_address_wrapper {
+  padding: 20px;
+}
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
-.pagination ul{
+.pagination ul {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -13,8 +24,8 @@
   border-radius: 50px;
   /* box-shadow: 0px 10px 15px rgba(0,0,0,0.1); */
 }
-.pagination ul li{
-  color: #829B2F;;
+.pagination ul li {
+  color: #829b2f;
   list-style: none;
   line-height: 45px;
   text-align: center;
@@ -24,7 +35,7 @@
   user-select: none;
   transition: all 0.3s ease;
 }
-.pagination ul li.numb{
+.pagination ul li.numb {
   list-style: none;
   height: 45px;
   width: 45px;
@@ -32,29 +43,27 @@
   line-height: 45px;
   border-radius: 50%;
 }
-.pagination ul li.numb.first{
+.pagination ul li.numb.first {
   margin: 0px 3px 0 -5px;
 }
-.pagination ul li.numb.last{
+.pagination ul li.numb.last {
   margin: 0px -5px 0 3px;
 }
-.pagination ul li.dots{
+.pagination ul li.dots {
   font-size: 22px;
   cursor: default;
 }
-.pagination ul li.btn{
+.pagination ul li.btn {
   padding: 0 20px;
   border-radius: 50px;
 }
 .pagination li.active,
 .pagination ul li.numb:hover,
 .pagination ul li:first-child:hover,
-.pagination ul li:last-child:hover{
+.pagination ul li:last-child:hover {
   color: #fff;
-  background: #829B2F;;
+  background: #829b2f;
 }
-
-
 
 /* Pagination... */
 
@@ -2379,7 +2388,7 @@ button.btn.btn-danger.btn-sm.me-1.mb-2 {
 .card-body img {
   height: 100px;
   width: 100px !important;
-  border: 1px solid #28292d;
+  /* border: 1px solid #28292d; */
 }
 
 .auto_menu .megamenu__text {

@@ -453,8 +453,7 @@ require("components/head.php");
                   </div>
                 </div>
 
-                <input type="hidden" id="buynow-state-id"
-                  value="<?= isset($defaultstateValue) ? $defaultstateValue : '' ?>">
+                <input type="hidden" id="buynow-state-id" value="<?= $defaultstateValue ?>">
 
                 <div class="action_btn">
                   <a href="<?= base_url() ?>" type="button" class="btn-primary prev-step">Continue shopping</a>
@@ -503,10 +502,10 @@ require("components/head.php");
                 <p>Total</p>
                 <p id="step3-totalamt" class="total_amt_cal"></p>
               </div> -->
-              <div class="price_total">
+              <!-- <div class="price_total">
                 <p>Shipping</p>
                 <p>free</p>
-              </div>
+              </div> -->
               <!-- <div class="price_total">
                 <p>Discount</p>
                 <p>0</p>
@@ -518,7 +517,7 @@ require("components/head.php");
             </div>
             <input type="hidden" id="final_total" name="final_total">
             <button type="button" class="total_btn_cart">
-              <span>Total</span>
+              <span>Total Payable</span>
               <span id="step3-totalamt" class="total_amt_cal overAllTotalValue"></span>
             </button>
 
@@ -593,7 +592,7 @@ require("components/head.php");
       $(".address-radio").change(function () {
         let add_id = $(this).attr("id");
         let state = $(this).data('state_id');
-        $("#buynow-state-id").val(state);
+
         $.ajax({
           type: "POST",
           url: base_Url + "update-default-addr",
@@ -606,7 +605,7 @@ require("components/head.php");
               $(".address-radio").not(this).prop("checked", false);
               $("#" + add_id).prop("checked", true);
 
-
+              $("#buynow-state-id").val(R.state_id);
             }
             else {
               $.toast({

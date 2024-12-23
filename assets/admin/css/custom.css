@@ -1,3 +1,15 @@
+.refund_menu {
+  margin-top: 2px;
+  padding: 3%;
+}
+#amount_type {
+  width: 80%;
+}
+
+.change-address {
+  background-color: #a1c335;
+}
+
 .authentication .desktop-logo,
 .authentication .desktop-dark {
   height: 8rem;
@@ -138,7 +150,3 @@
   text-overflow: ellipsis !important;
   white-space: initial !important;
 }
-
-
-
-

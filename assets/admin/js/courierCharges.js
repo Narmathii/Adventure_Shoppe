@@ -149,7 +149,6 @@ $(document).ready(function () {
       dataType: "json",
       success: function (data) {
         res_DATA = data;
-        console.log(res_DATA);
         dispCourierDetails(res_DATA);
       },
       error: function () {
@@ -241,6 +240,8 @@ $(document).ready(function () {
     var stateID = res_DATA[index].state_id;
     distID = res_DATA[index].dist_id;
     distname = res_DATA[index].dist_name;
+
+    $("#state_id").val(stateID);
     $("#state_id").val(stateID).trigger("change");
 
     let charge = "";

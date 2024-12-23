@@ -384,7 +384,7 @@ require("components/head.php");
 
                                 <input type="hidden" id="total_page" name="total_page" value="<?= $totalPage ?>" />
                                 <?php if (count($r_accessories) >= 12) { ?>
-                                    <div class="pagination col-lg-12 col-md-12 col-12 flex-end">
+                                    <div class="pagination col-lg-12 col-md-12 col-12 flex-end" data-subid="<?= $sub_id ?>">
                                         <ul></ul>
                                     </div>
 
@@ -410,11 +410,12 @@ require("components/head.php");
 
             let currentPage = 1;
             let totalPages = $("#total_page").val();
-            let page = 12;
+            var subID = $(".pagination").data("subid");
 
+            console.log(subID);
             function fetchData(page) {
                 $.ajax({
-                    url:base_Url + '/getpage_', // Update with your PHP endpoint
+                    url: base_Url + '/getpage' + page,
                     method: "GET",
                     dataType: "json",
                     success: function (response) {
@@ -432,7 +433,7 @@ require("components/head.php");
                 });
             }
 
-            fetchData();
+            fetchData(currentPage);
 
 
 

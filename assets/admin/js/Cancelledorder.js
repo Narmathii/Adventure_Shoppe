@@ -259,6 +259,7 @@ $(document).ready(function () {
     var index = $(this).attr("id");
     $("#refund-status").html("");
     $("#refund-button").html("");
+
     CancelOrderID = orderid;
     $.ajax({
       type: "POST",
@@ -271,10 +272,11 @@ $(document).ready(function () {
 
         let DisplayBtn = "";
         DisplayBtn += `<a type="button" id="refund-btn"
-                        class="btn btn-warning my-1 me-2">
+                        class="btn btn-warning my-1- me-2">
                         Click to Refund </a>`;
 
         if (viewOrder[0]["payment_status"] == "COMPLETED") {
+          $(".refund_menu").removeClass("d-none");
           $("#refund-button").removeClass("d-none");
           $("#refund-button").html(DisplayBtn);
         }
@@ -285,7 +287,9 @@ $(document).ready(function () {
                         Check Refund Status </a>`;
 
         if (viewOrder[0]["delivery_status"] == "Refund Processing") {
+          $(".refund_menu").removeClass("d-none");
           $("#refund-status").removeClass("d-none");
+
           $("#refund-status").html(RefundStatus);
         }
 
@@ -477,46 +481,54 @@ $(document).ready(function () {
 
   // *************************** [Refund] *************************************************************************
   $(document).on("click", "#refund-btn", function () {
-    let CancelPaymentID = $("#cancel-payid").val();
-    let CancelOrderID = $("#cancel-orderid").val();
+    if ($("#amount_type").val() == "") {
+      alert("Pleae Select Amount type");
+    } else {
+      getCancelorder();
+    }
 
-    $.ajax({
-      url: base_Url + "process-refund",
-      type: "POST",
-      dataType: "json",
-      data: {
-        payment_id: CancelPaymentID,
-        order_id: CancelOrderID,
-      },
-      success: function (response) {
-        console.log(response);
+    function getCancelorder() {
+      let CancelPaymentID = $("#cancel-payid").val();
+      let CancelOrderID = $("#cancel-orderid").val();
+      let amount_type = $("#amount_type").val();
 
-        if (response.code == 200) {
-          $("#refund-btn").addClass("d-none");
+      $.ajax({
+        url: base_Url + "process-refund",
+        type: "POST",
+        dataType: "json",
+        data: {
+          payment_id: CancelPaymentID,
+          order_id: CancelOrderID,
+          amount_type: amount_type,
+        },
+        success: function (response) {
+          if (response.code == 200) {
+            $("#refund-btn").addClass("d-none");
 
-          Swal.fire({
-            title: "Congratulations!",
-            text: response.message,
-            icon: "success",
-          });
-          setTimeout(function () {
-            location.reload();
-          }, 1500);
-        } else {
-          Swal.fire({
-            title: "Failure!",
-            text: response.message,
-            icon: "danger",
-          });
-          setTimeout(function () {
-            location.reload();
-          }, 1500);
-        }
-      },
-      error: function () {
-        console.log(response);
-      },
-    });
+            Swal.fire({
+              title: "Congratulations!",
+              text: response.message,
+              icon: "success",
+            });
+            setTimeout(function () {
+              location.reload();
+            }, 1500);
+          } else {
+            Swal.fire({
+              title: "Failure!",
+              text: response.message,
+              icon: "danger",
+            });
+            setTimeout(function () {
+              location.reload();
+            }, 1500);
+          }
+        },
+        error: function () {
+          console.log(response);
+        },
+      });
+    }
   });
 
   // *************************** [Check refund status ] *************************************************************************

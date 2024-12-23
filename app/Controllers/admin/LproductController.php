@@ -58,82 +58,113 @@ class LproductController extends BaseController
             echo json_encode($result);
 
         } else {
-            $Img1 = $this->request->getFile('img_1');
-            $Img2 = $this->request->getFile('img_2');
-            $Img3 = $this->request->getFile('img_3');
-            $Img4 = $this->request->getFile('img_4');
-            $Img5 = $this->request->getFile('img_5');
-            $Img6 = $this->request->getFile('img_6');
-            $Img7 = $this->request->getFile('img_7');
-            $Img8 = $this->request->getFile('img_8');
-            $Img9 = $this->request->getFile('img_9');
-            $Img10 = $this->request->getFile('img_10');
-
-
-            $productImg->move('./uploads/ProductImg/');
-            if ($Img1 && $Img1->isValid() && !$Img1->hasMoved()) {
-                $Img1->move('./uploads/Img1/');
-            }
-            if ($Img2 && $Img2->isValid() && !$Img2->hasMoved()) {
-                $Img2->move('./uploads/Img2/');
-            }
-            if ($Img3 && $Img3->isValid() && !$Img3->hasMoved()) {
-                $Img3->move('./uploads/Img3/');
-            }
-            if ($Img4 && $Img4->isValid() && !$Img4->hasMoved()) {
-                $Img4->move('./uploads/Img4/');
+            if ($this->request->getFile('product_img') && $this->request->getFile('product_img')->isValid()) {
+                $productImg = $this->request->getFile('product_img');
+                $prodname = $productImg->getRandomName();
+                $prodname = str_replace(" ", "_", $prodname);
+                $filePath = "uploads/ProductImg/";
+                $productImg->move($filePath, $prodname);
+                $data['product_img'] = $filePath . $prodname;
             }
 
-            if ($Img5 && $Img5->isValid() && !$Img5->hasMoved()) {
-                $Img5->move('./uploads/');
+            if ($this->request->getFile('img_1') != "" && $this->request->getFile('img_1')->isValid()) {
+                $Img1 = $this->request->getFile('img_1');
+                $img1 = $Img1->getRandomName();
+                $img1 = str_replace(" ", "_", $img1);
+                $filePath1 = "uploads/Img1/";
+                $Img1->move($filePath1, $img1);
+                $data['img_1'] = $filePath1 . $img1;
             }
-            if ($Img6 && $Img6->isValid() && !$Img6->hasMoved()) {
-                $Img6->move('./uploads');
+
+            if ($this->request->getFile('img_2') != "" && $this->request->getFile('img_2')->isValid()) {
+                $Img2 = $this->request->getFile('img_2');
+                $img2 = $Img2->getRandomName();
+                $img2 = str_replace(" ", "_", $img2);
+                $filePath2 = "uploads/Img2/";
+                $Img2->move($filePath2, $img2);
+                $data['img_2'] = $filePath2 . $img2;
             }
-            if ($Img7 && $Img7->isValid() && !$Img7->hasMoved()) {
-                $Img7->move('./uploads');
+
+            if ($this->request->getFile('img_3') != "" && $this->request->getFile('img_3')->isValid()) {
+                $Img3 = $this->request->getFile('img_3');
+                $img3 = $Img3->getRandomName();
+                $img3 = str_replace(" ", "_", $img3);
+                $filePath3 = "uploads/Img3/";
+                $Img3->move($filePath3, $img3);
+                $data['img_3'] = $filePath3 . $img3;
             }
-            if ($Img8 && $Img8->isValid() && !$Img8->hasMoved()) {
-                $Img8->move('./uploads');
+
+            if ($this->request->getFile('img_4') != "" && $this->request->getFile('img_4')->isValid()) {
+                $Img4 = $this->request->getFile('img_4');
+                $img4 = $Img4->getRandomName();
+                $img4 = str_replace(" ", "_", $img4);
+                $filePath4 = "uploads/Img3/";
+                $Img4->move($filePath4, $img4);
+                $data['img_4'] = $filePath4 . $img4;
             }
-            if ($Img9 && $Img9->isValid() && !$Img9->hasMoved()) {
-                $Img9->move('./uploads');
-            }
-            if ($Img10 && $Img10->isValid() && !$Img10->hasMoved()) {
-                $Img10->move('./uploads');
+
+            if ($this->request->getFile('img_5') != "" && $this->request->getFile('img_5')->isValid()) {
+                $Img5 = $this->request->getFile('img_5');
+                $img5 = $Img5->getRandomName();
+                $img5 = str_replace(" ", "_", $img5);
+                $filePath5 = "uploads/";
+                $Img5->move($filePath5, $img5);
+                $data['img_5'] = $filePath5 . $img5;
             }
 
 
-            $file_path1 = '/uploads/ProductImg/';
-            $file_path2 = '/uploads/Img1/';
-            $file_path3 = '/uploads/Img2/';
-            $file_path4 = '/uploads/Img3/';
-            $file_path5 = '/uploads/Img4/';
-            $file_path = '/uploads';
+            if ($this->request->getFile('img_6') != '' && $this->request->getFile('img_6')->isValid()) {
+                $Img6 = $this->request->getFile('img_6');
+                $img6 = $Img6->getRandomName();
+                $img6 = str_replace(" ", "_", $img6);
+                $filePath6 = "uploads/";
 
-            $Prodname = $productImg->getName();
-            $img_1 = $Img1->getName();
-            $img_2 = $Img2->getName();
-            $img_3 = $Img3->getName();
-            $img_4 = $Img4->getName();
-            $img_5 = $Img5 ? $Img5->getName() : " ";
-            $img_6 = $Img6 ? $Img6->getName() : " ";
-            $img_7 = $Img7 ? $Img7->getName() : " ";
-            $img_8 = $Img8 ? $Img8->getName() : " ";
-            $img_9 = $Img9 ? $Img9->getName() : " ";
-            $img_10 = $Img10 ? $Img10->getName() : " ";
+                $Img6->move($filePath6, $img6);
 
-            $data['product_img'] = $file_path1 . $Prodname;
-            $data['img_1'] = $file_path2 . $img_1;
-            $data['img_2'] = $file_path3 . $img_2;
-            $data['img_3'] = $file_path4 . $img_3;
-            $data['img_4'] = $file_path5 . $img_4;
-            $data['img_5'] = $img_5 ? $file_path . $img_5 : " ";
-            $data['img_6'] = $img_6 ? $file_path . $img_6 : " ";
-            $data['img_7'] = $img_7 ? $file_path . $img_7 : " ";
-            $data['img_8'] = $img_8 ? $file_path . $img_8 : " ";
-            $data['img_9'] = $img_9 ? $file_path . $img_9 : " ";
-            $data['img_10'] = $img_10 ? $file_path . $img_10 : " ";
+                $data['img_6'] = $filePath6 . $img6;
+            }
+            if ($this->request->getFile('img_7') != '' && $this->request->getFile('img_7')->isValid()) {
+                $Img7 = $this->request->getFile('img_7');
+                $img7 = $Img7->getRandomName();
+                $img7 = str_replace(" ", "_", $img7);
+                $filePath7 = "uploads/";
+
+                $Img7->move($filePath7, $img7);
+
+                $data['img_7'] = $filePath7 . $img7;
+            }
+            if ($this->request->getFile('img_8') != '' && $this->request->getFile('img_8')->isValid()) {
+                $Img8 = $this->request->getFile('img_8');
+                $img8 = $Img8->getRandomName();
+                $img8 = str_replace(" ", "_", $img8);
+                $filePath8 = "uploads/";
+
+                $Img8->move($filePath8, $img8);
+
+                $data['img_8'] = $filePath8 . $img8;
+            }
+            if ($this->request->getFile('img_9') != '' && $this->request->getFile('img_9')->isValid()) {
+                $Img9 = $this->request->getFile('img_9');
+                $img9 = $Img9->getRandomName();
+                $img9 = str_replace(" ", "_", $img9);
+                $filePath9 = "uploads/";
+
+                $Img9->move($filePath9, $img9);
+
+                $data['img_9'] = $filePath9 . $img9;
+            }
+            if ($this->request->getFile('img_10') != '' && $this->request->getFile('img_10')->isValid()) {
+                $Img10 = $this->request->getFile('img_10');
+                $img10 = $Img10->getRandomName();
+                $img10 = str_replace(" ", "_", $img10);
+                $filePath10 = "uploads/";
+
+                $Img10->move($filePath10, $img10);
+
+                $data['img_10'] = $filePath10 . $img10;
+
+            }
+
 
 
             $insertData = $modal->insert($data);

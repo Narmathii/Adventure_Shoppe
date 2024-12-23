@@ -59,8 +59,8 @@
                                                 <th>Customer name</th>
                                                 <th>Order Date</th>
                                                 <th>Order Details</th>
-                                                <th>Payment Status</th>
-                                                <th>Delivery Date</th>
+                                                <th>Refund ID</th>
+                                                <th>Refund Amount</th>
                                                 <th>Delivery Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -90,7 +90,7 @@
             <div class="modal-body">
                 <form id="modal-form">
                     <div class="row">
-                    <div class="col-md-12">
+                        <div class="col-md-12">
                             <div class="card custom-card card-bg-light">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center w-100">
@@ -113,7 +113,7 @@
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
-                                         
+
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">
@@ -163,12 +163,9 @@
                                             <div class="card-title">
                                                 Order Items
                                             </div>
-                                            <!-- <div>
-                                                    <b>Tracking Number :</b>
-                                                    <button type="button" class="btn btn-warning my-1 me-2">
-                                                        SPK1218153635
-                                                    </button>
-                                                </div> -->
+                                            <div id="refund-status" class="d-none">
+                                               
+                                            </div>
                                         </div>
                                         <div class="card-body p-0">
                                             <div class="table-responsive">

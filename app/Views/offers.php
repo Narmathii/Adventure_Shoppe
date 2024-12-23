@@ -827,7 +827,7 @@ require("components/head.php");
 
 
                                 searchResults += `
-                    <div class="col-12 col-lg-4 productCard mb-4">
+                    <div class="col-12 col-lg-3 productCard mb-4">
                     <form>
                         
                             <div class="de-item">

@@ -86,9 +86,7 @@ class BuynowController extends BaseController
 
         $res['courier_type'] = $db->query("SELECT courier_id, courier_name FROM tbl_couriers WHERE flag = 1")->getResultArray();
 
-        // echo "<prE>";
-        // print_r($res['buynow']);
-        // exit;
+
 
         return view('buyNow', $res);
     }
@@ -125,7 +123,7 @@ class BuynowController extends BaseController
         $prod_id = $this->request->getPost('prod_id');
         $prod_price = $this->request->getPost('prod_price');
         $quantity = $this->request->getPost('quantity');
-        $subTotal = $prod_price * $quantity;
+
 
         $userID = $this->session->get('user_id');
 
@@ -134,22 +132,35 @@ class BuynowController extends BaseController
             $size = 0;
         }
 
+        // getOrginal Products Price 
+        $q1 = "SELECT `offer_price` ,`quantity`  FROM $tblName WHERE  `flag` = 1 AND `prod_id` = ?";
+        $getOriginalProducts = $db->query($q1, [$prod_id])->getRow();
 
-        $sql = "SELECT * FROM tbl_buynow WHERE  flag = 1";
-        $getResult = $db->query($sql)->getResultArray();
+        $OriginalPrice = $getOriginalProducts->offer_price;
+        $OriginalQty = $getOriginalProducts->quantity;
 
+        if ($prod_price == $OriginalPrice && $quantity <= $OriginalQty) {
+            $finalProdPrice = $prod_price;
+        } else {
+            $finalProdPrice = $OriginalPrice;
+        }
+
+        $subTotal = $finalProdPrice * $quantity;
 
         $data = [
             'user_id' => $userID,
             'table_name' => $tblName,
             'prod_id' => $prod_id,
             'quantity' => $quantity,
-            'prod_price' => $prod_price,
+            'prod_price' => $finalProdPrice,
             'sub_total' => $subTotal,
             'size' => $size,
             'config_image1' => $configImage
         ];
 
+
+        $sql = "SELECT * FROM tbl_buynow WHERE  flag = 1";
+        $getResult = $db->query($sql)->getResultArray();
 
         if (count($getResult) > 0) {
             $dltOldData = $db->query("DELETE FROM tbl_buynow WHERE  flag = 1");
@@ -258,9 +269,10 @@ class BuynowController extends BaseController
     {
         $this->session = \Config\Services::session();
         $db = \Config\Database::connect();
-
+        $this->session = \Config\Services::session();
         $prevURl = previous_url();
 
+     
         $loginStatus = session()->get('loginStatus');
         if ($loginStatus == "NO") {
             session()->set('callback_url', $prevURl);
@@ -284,6 +296,9 @@ class BuynowController extends BaseController
         $orderModel = new OrdersModel;
 
 
+        $data = $this->request->getPost();
+
+
         $totalAmt = $this->request->getPost('totalamt');
         $courierCharge = $this->request->getPost('courierCharge');
         $State = $this->request->getPost('stateid');
@@ -291,8 +306,9 @@ class BuynowController extends BaseController
         $userID = session()->get('user_id');
 
 
-        $buynowQuery = "SELECT * FROM `tbl_buynow` WHERE `user_id` = ?";
+        $buynowQuery = "SELECT * FROM `tbl_buynow` WHERE `user_id` = ? AND `flag` = 1";
         $buynowData = $db->query($buynowQuery, [$userID])->getResultArray();
+
         if (empty($buynowData)) {
             return json_encode(['code' => 400, 'status' => false, 'message' => 'No product Selected!']);
         }
@@ -305,14 +321,14 @@ class BuynowController extends BaseController
         foreach ($buynowData as $item) {
             $prodID = $item['prod_id'];
             $tblName = $item['table_name'];
-            $cartQuantity = $item['quantity'];
-            $cartPrice = $item['prod_price'];
-            $cartSubtotal = $item['sub_total'];
+            $buyQuantity = $item['quantity'];
+            $buyPrice = $item['prod_price'];
+            $buySubtotal = $item['sub_total'];
 
             // Fetch the original product details for validation
             $originalProductQuery = "SELECT `prod_id`, `quantity`, `offer_price`, `tbl_name`, `weight` 
                              FROM $tblName 
-                             WHERE `prod_id` = ?";
+                             WHERE `prod_id` = ? AND `flag` = 1";
             $originalProductData = $db->query($originalProductQuery, [$prodID])->getRow();
 
 
@@ -325,61 +341,85 @@ class BuynowController extends BaseController
             $originalWeight = $originalProductData->weight;
 
             // Correct cart price and quantity if mismatched
-            $finalPrice = ($cartPrice == $originalPrice) ? $cartPrice : $originalPrice;
+            $finalPrice = ($buyPrice == $originalPrice) ? $buyPrice : $originalPrice;
 
-
-
-            if ($cartQuantity <= $originalQty && $cartPrice == $originalPrice) {
-                $OrderPrice += $cartSubtotal;
+            if ($buyQuantity <= $originalQty && $buyPrice == $originalPrice) {
+                $OrderPrice += $buySubtotal;
             } else {
-                $OrderPrice += $originalPrice * $cartQuantity;
+                $OrderPrice += $originalPrice * $buyQuantity;
             }
 
 
             // Calculate total weight
             if (!empty($originalWeight)) {
                 $prodWeightKg = $originalWeight / 1000;
-                $totalWeightKg += $cartQuantity * $prodWeightKg;
+                $totalWeightKg += $buyQuantity * $prodWeightKg;
             }
 
 
-            // Fetch courier charge for the product
-            $courierChargeQuery = "SELECT `charges` 
-                           FROM `tbl_courier_charges` 
-                           WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
-                           AND courier_id = ? AND dist_id = 0";
-            $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
+            if ($courierType == 0) {
+                $finalCourierCharge = 100;
+            } else {
+                // Fetch courier charge for the product
+                $courierChargeQuery = "SELECT `charges` 
+FROM `tbl_courier_charges` 
+WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
+AND courier_id = ? AND dist_id = 0";
+                $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
 
-            if ($courierChargeData) {
-                $finalCourierCharge = $courierChargeData->charges;
+                if ($courierChargeData) {
+                    $finalCourierCharge = $courierChargeData->charges;
+                }
             }
         }
 
-        // Calculate courier charges based on total weight
-        if ($totalWeightKg <= 1) {
-            $totalCharge = $finalCourierCharge;
+        if ($courierType == 0) {
+            $totalcourierCharge = $finalCourierCharge;
         } else {
-            $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
-        }
+            // Calculate courier charges based on total weight
+            if ($totalWeightKg <= 1) {
+                $totalCharge = $finalCourierCharge;
+            } else {
+                $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
+            }
 
-        // Calculate GST and final total
-        $GST = 0.18;
-        $gstAmount = $totalCharge * $GST;
-        $finalTotal = ceil($totalCharge + $gstAmount + 10);
+            // Calculate GST and final total
+            $GST = 0.18;
+            $gstAmount = $totalCharge * $GST;
+            $finalTotal = ceil($totalCharge + $gstAmount + 10);
 
+            // check Courier charge
+            if ($finalTotal != $courierCharge) {
+                $totalcourierCharge = $finalTotal;
+            } else {
+                $totalcourierCharge = $courierCharge;
+            }
 
-        // check Courier charge
-        if ($finalTotal != $courierCharge) {
-            $totalcourierCharge = $finalTotal;
-        } else {
-            $totalcourierCharge = $courierCharge;
         }
 
         $finalOrderPrice = $OrderPrice + $totalcourierCharge;
 
+        // getCount of total Orders 
+        $orderTotalq = "SELECT COUNT(`order_id`) AS total_count  FROM `tbl_orders`";
+        $orderTotalData = $db->query($orderTotalq)->getRow();
 
-        $random_number = mt_rand(1000, 9999);
-        $orderNO = "AS2024" . $random_number;
+        if ($orderTotalData > 0) {
+            $orderTotal = $orderTotalData->total_count;
+
+            $finalOrdernumber = $orderTotal + 1;
+            $orderNumberLength = strlen((string) $finalOrdernumber);
+
+
+            if ($finalOrdernumber < 10000) {
+                $orderNO = "AS2024" . str_pad($finalOrdernumber, 4, '0', STR_PAD_LEFT);
+            } else {
+                // For numbers 10000 and above, it will automatically expand to 5 digits, 6 digits
+                $orderNO = "AS2024" . $finalOrdernumber;
+            }
+        } else {
+            $orderNO = "AS20240001";
+        }
+        // end of total Orders 
 
 
 
@@ -389,7 +429,6 @@ class BuynowController extends BaseController
         }
 
         $addID = $getAddreess->add_id;
-
 
         // Prepare corrected order data
         $OrderData = [
@@ -471,18 +510,23 @@ class BuynowController extends BaseController
     {
         $db = \Config\Database::connect();
         $stateID = $this->request->getPost("state_id");
-        $courierType = $this->request->getPost();
+        $courierType = $this->request->getPost("courierType");
 
 
 
-        $query = "SELECT `charges` FROM `tbl_courier_charges` WHERE `flag` = 1 AND `dist_id` = 0 AND `state_id` = ? AND `active_sts` = 1 ";
-        $getCharge = $db->query($query, [$stateID])->getRow();
+        $query = "SELECT `charges` FROM `tbl_courier_charges` WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 AND courier_id = ?";
+        $getCharge = $db->query($query, [$stateID, $courierType])->getRow();
+
+
+
         $charge = $getCharge->charges;
 
         $userID = session()->get("user_id");
 
         $query = "SELECT * FROM `tbl_buynow` WHERE `flag` = 1 AND `user_id` = ?";
         $prodList = $db->query($query, [$userID])->getResultArray();
+
+
 
         $totalWeightKg = 0;
         foreach ($prodList as $prod) {
@@ -513,6 +557,8 @@ class BuynowController extends BaseController
         $GST = 0.18;
         $total = $totalCharge + 10 + ($totalCharge * $GST);
         $finalCharge = ceil($total);
+
+
 
         // $finalCharge = 1;
 

@@ -14,18 +14,46 @@ class CartCheckoutController extends BaseController
 
         $data = $this->request->getPost();
 
+
+
         $courierCharge = $this->request->getPost('courierCharge');
         $totalAmt = $this->request->getPost('totalamt');
         $State = $this->request->getPost('stateid');
         $courierType = $this->request->getPost('courier_type');
-        $randomNumber = mt_rand(1000, 9999);
 
-        $orderNO = "AS2024" . $randomNumber;
+
+        // getCount of total Orders 
+        $orderTotalq = "SELECT COUNT(`order_id`) AS total_count  FROM `tbl_orders`";
+        $orderTotalData = $db->query($orderTotalq)->getRow();
+
+        if ($orderTotalData > 0) {
+            $orderTotal = $orderTotalData->total_count;
+
+            $finalOrdernumber = $orderTotal + 1;
+            $orderNumberLength = strlen((string) $finalOrdernumber);
+
+
+            if ($finalOrdernumber < 10000) {
+                $orderNO = "AS2024" . str_pad($finalOrdernumber, 4, '0', STR_PAD_LEFT);
+            } else {
+                // For numbers 10000 and above, it will automatically expand to 5 digits, 6 digits
+                $orderNO = "AS2024" . $finalOrdernumber;
+            }
+        } else {
+            $orderNO = "AS20240001";
+        }
+        // end of total Orders 
+
+
+
+
         $userID = session()->get('user_id');
 
         // Fetch user cart data
-        $cartQuery = "SELECT * FROM `tbl_user_cart` WHERE `user_id` = ?";
+        $cartQuery = "SELECT * FROM `tbl_user_cart` WHERE `user_id` = ? AND `flag` =1 ";
         $cartData = $db->query($cartQuery, [$userID])->getResultArray();
+
+
 
         if (empty($cartData)) {
             return json_encode(['code' => 400, 'status' => false, 'message' => 'Cart is empty!']);
@@ -63,9 +91,9 @@ class CartCheckoutController extends BaseController
             $finalPrice = ($cartPrice == $originalPrice) ? $cartPrice : $originalPrice;
 
 
-
             if ($cartQuantity <= $originalQty && $cartPrice == $originalPrice) {
                 $OrderPrice += $cartSubtotal;
+
             } else {
                 $OrderPrice += $originalPrice * $cartQuantity;
             }
@@ -78,40 +106,48 @@ class CartCheckoutController extends BaseController
             }
 
 
-            // Fetch courier charge for the product
-            $courierChargeQuery = "SELECT `charges` 
-                           FROM `tbl_courier_charges` 
-                           WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
-                           AND courier_id = ? AND dist_id = 0";
-            $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
 
-            if ($courierChargeData) {
-                $finalCourierCharge = $courierChargeData->charges;
+            if ($courierType == 0) {
+                $finalCourierCharge = 100;
+            } else {
+                // Fetch courier charge for the product
+                $courierChargeQuery = "SELECT `charges` 
+ FROM `tbl_courier_charges` 
+ WHERE `flag` = 1 AND `state_id` = ? AND `active_sts` = 1 
+ AND courier_id = ? AND dist_id = 0";
+                $courierChargeData = $db->query($courierChargeQuery, [$State, $courierType])->getRow();
+
+                if ($courierChargeData) {
+                    $finalCourierCharge = $courierChargeData->charges;
+                }
             }
         }
 
-        // Calculate courier charges based on total weight
-        if ($totalWeightKg <= 1) {
-            $totalCharge = $finalCourierCharge;
+
+        if ($courierType == 0) {
+            $totalcourierCharge = $finalCourierCharge;
         } else {
-            $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
-        }
+            // Calculate courier charges based on total weight
+            if ($totalWeightKg <= 1) {
+                $totalCharge = $finalCourierCharge;
+            } else {
+                $totalCharge = $finalCourierCharge * ceil($totalWeightKg);
+            }
+            // Calculate GST and final total
+            $GST = 0.18;
+            $gstAmount = $totalCharge * $GST;
+            $finalTotal = ceil($totalCharge + $gstAmount + 10);
 
-        // Calculate GST and final total
-        $GST = 0.18;
-        $gstAmount = $totalCharge * $GST;
-        $finalTotal = ceil($totalCharge + $gstAmount + 10);
 
-
-        // check Courier charge
-        if ($finalTotal != $courierCharge) {
-            $totalcourierCharge = $finalTotal;
-        } else {
-            $totalcourierCharge = $courierCharge;
+            // check Courier charge
+            if ($finalTotal != $courierCharge) {
+                $totalcourierCharge = $finalTotal;
+            } else {
+                $totalcourierCharge = $finalTotal;
+            }
         }
 
         $finalOrderPrice = $OrderPrice + $totalcourierCharge;
-
 
         // Fetch default address for the user
         $addressQuery = "SELECT `add_id` 
@@ -147,7 +183,10 @@ class CartCheckoutController extends BaseController
         $this->session->set($sess);
 
         $affectedRows = $db->affectedRows();
-        if ($affectedRows) {
+
+
+
+        if ($affectedRows == 1) {
             $query = "SELECT a.cart_id, a.`table_name`, a.`prod_id`, a.`quantity`, a.`prod_price`, a.`sub_total`,
             a.color,a.hex_code,a.size , a.config_image1, b.add_id 
             FROM `tbl_user_cart` AS a 
@@ -156,7 +195,8 @@ class CartCheckoutController extends BaseController
 
             $cartData = $db->query($query)->getResultArray();
 
-            $affectedRows = 0;
+
+            $inner_affectedRows = 0;
 
             foreach ($cartData as $cartItem) {
                 $prodID = $cartItem['prod_id'];
@@ -180,10 +220,10 @@ class CartCheckoutController extends BaseController
                 $query = "INSERT INTO tbl_order_item (order_id, prod_id, table_name, quantity, prod_price, sub_total, color, hex_code,color_name, size, config_image1) 
                 VALUES ('$OrderID', '$prodID', '$tblName', '$qty', '$prodPrice', '$subTotal', '$color', '$hex_code','$colorName', '$size', '$config_image1')";
                 $orderItem = $db->query($query);
-                $affectedRows = $db->affectedRows();
+                $inner_affectedRows = $db->affectedRows();
 
 
-                if ($affectedRows === 1) {
+                if ($inner_affectedRows == 1) {
                     $res['code'] = 200;
                     $res['message'] = "OrderPlaced";
 

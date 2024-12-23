@@ -21,8 +21,8 @@ class AddressController extends BaseController
         tbl_state AS a INNER JOIN tbl_district AS b 
         ON a.state_id = b.state_id WHERE  a.`flag` = 1 AND b.state_id = $stateID;")->getResultArray();
         $getData['code'] = 200;
-        $getData['csrf'] = csrf_hash();
-        //  echo "<pre>";print_r($getData);exit;
+        // $getData['csrf'] = csrf_hash();
+
         echo json_encode($getData);
     }
     public function insertAddress()
@@ -33,6 +33,8 @@ class AddressController extends BaseController
 
         $stateID = $this->request->getPost('state_id');
         $data = $this->request->getPost();
+
+    
 
         $distID = $this->request->getPost('dist_id');
         $landMark = $this->request->getPost('landmark');

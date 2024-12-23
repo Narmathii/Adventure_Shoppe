@@ -5,6 +5,24 @@ require("components/head.php");
 <meta name="csrf-token" content="<?= csrf_hash() ?>">
 
 <style>
+  .change-address {
+    color: #a1c335;
+    text-transform: capitalize;
+
+    background-color: #a1c335;
+    color: #fff !important;
+
+  }
+
+  .address-field>p {
+    overflow-wrap: break-word !important;
+  }
+
+  .change-address:hover {
+    box-shadow: 0 2px 5px 0 #a1c335, 0 2px 10px 0 #a1c335 !important;
+
+  }
+
   .food_dec_flex {
     background-size: 100%;
     background-repeat: no-repeat;
@@ -234,7 +252,7 @@ require("components/head.php");
   .form-check-input {
     margin-top: 1px;
     z-index: 99;
-    margin-left: 2%;
+    margin-left: -2%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -347,8 +365,8 @@ require("components/head.php");
   $defaultStateValue = 0;
   ?>
   <!-- content begin -->
-  <section class="pb-0">
-    <div id="container" class="container mt-5">
+  <section class="pb-0 cartlist-container">
+    <div id="container" class="container mt-5 ">
       <div class="progress_bar">
         <div class="progress px-1" style="height: 3px;">
           <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0"
@@ -442,7 +460,8 @@ require("components/head.php");
 
                                 <div class="form-outline">
                                   <input min="1" step="1" name="quantity" value="<?php echo $cart_product[$i]->quantity ?>"
-                                    type="number" class="form-control quantity_<?php echo $cart_product[$i]->cart_id ?>"  readonly/>
+                                    type="number" class="form-control quantity_<?php echo $cart_product[$i]->cart_id ?>"
+                                    readonly />
                                   <label class="form-label">Quantity</label>
                                 </div>
 
@@ -503,27 +522,29 @@ require("components/head.php");
                 <div class="col-md-4">
                   <div class="card mb-4">
                     <div class="card-header py-3">
-                      <h5 class="mb-0">Summary</h5>
+                      <h5 class="mb-0">Price details</h5>
                     </div>
                     <div class="card-body">
                       <!-- <form id="checkout-form"> -->
                       <ul class="list-group list-group-flush">
                         <li
                           class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                          Products
+                          <?php
+                          $Itemview = ($total_items > 1) ? 'Items' : 'Item' ?>
+                          Price (<?= $total_items ?> <?= $Itemview ?> )
                           <span class="m-0 total_amt_cal"></span>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <!-- <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                           Shipping
                           <span>0</span>
-                        </li>
+                        </li> -->
                         <li
                           class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                           <div>
                             <strong>Total amount</strong>
-                            <strong>
+                            <!-- <strong>
                               <p class="mb-0">(including VAT)</p>
-                            </strong>
+                            </strong> -->
                           </div>
                           <span><strong id="total-amt" class="total_amt_cal"></strong></span>
                         </li>
@@ -598,7 +619,7 @@ require("components/head.php");
                           <label class="form-check-label" for="default_addr">Set as default address</label>
                         </div>
                         <div class="save_cancel_btn p-1">
-                          <a type="submit" class="btn me-2  px-3 rounded-3 save_btn" id="btn_save">
+                          <a type="submit" class="btn me-2  px-3 rounded-3 save_btn" id="save_address">
                             <i class="fa fa-save me-2"></i>Save
                           </a>
                         </div>
@@ -608,160 +629,226 @@ require("components/head.php");
                   </form>
                 <?php } ?>
 
-                <div class="col-12 col-lg-7">
+                <div class="container">
                   <?php if (!empty($address)) { ?>
-                    <h4 class="text-center mb-5"> Delivery Address</h4>
-                    <?php for ($i = 0; $i < count($address); $i++) {
-                      $defaultAddress = $address[$i]['default_addr'];
-                      $checkedSts = $defaultAddress ? "checked" : "";
-                      $displayData = $checkedSts ? "display:block" : "";
-                      if ($defaultAddress)
-                        $defaultDistructValue = $address[$i]['dist_id'];
-                      ?>
-
-                      <div class="address_detail">
-                        <div class="acc_panel" style="<?php echo $displayData ?>">
-                          <input class="form-check-input address-radio" type="radio"
-                            data-dist_id="<?= $address[$i]['dist_id'] ?>" name="default_addr"
-                            id="<?php echo $address[$i]['add_id'] ?>" <?php echo $checkedSts ?>>
-
-                          <input type="hidden" id="prod_price" value="<?php echo $buynow[$i]['sub_total'] ?>" />
-
-
-                          <div class="d-text address-field ">
-                            <p><?php echo $address[$i]['username'] ?>
-
-                            </p>
-                            <span class="existing_address" id="view_address"><?php echo $address[$i]['address'] ?></span>
-                            ,
-                            <span class="existing_address" id="view_landmark"><?php echo $address[$i]['landmark'] ?></span>
-                            <br>
-                            <span class="existing_address" id="view_city"><?php echo $address[$i]['city'] ?></span> ,
-                            <span class="existing_address" id="view_district"><?php echo $address[$i]['dist_name'] ?></span>
-                            ,
-
-                            <span class="existing_address" id="view_dist"><?php echo $address[$i]['state_title'] ?> -
-                              <?php echo $address[$i]['pincode'] ?> </span>
-                            <br>
-                            <span class="existing_address" id="view_state"></span>
-                            <br>
-                            <p>
-                              Mobile Number :<span> <?php echo $address[$i]['number'] ?></span>
-                            </p>
+                    <div class="col-12 col-lg-7 mx-auto">
+                      <h4 class="text-center mb-4">Delivery Address</h4>
+                      <?php foreach ($address as $i => $addr) {
+                        $defaultAddress = $addr['default_addr'];
+                        $checkedSts = $defaultAddress ? "checked" : "";
+                        ?>
+                        <div class="address_detail d-flex flex-column flex-lg-row mb-3">
+                          <div class="col-12 col-lg-9">
+                            <div class="acc_panel">
+                              <input class="form-check-input address-radio mb-2" type="radio"
+                                data-dist_id="<?= $addr['dist_id'] ?>" name="default_addr" id="<?= $addr['add_id'] ?>"
+                                <?= $checkedSts ?> />
+                              <div class="d-text address-field">
+                                <p class="fw-bold"><?= $addr['username'] ?></p>
+                                <p><?= $addr['address'] ?>, <?= $addr['landmark'] ?></p>
+                                <p><?= $addr['city'] ?>, <?= $addr['dist_name'] ?>, <?= $addr['state_title'] ?> -
+                                  <?= $addr['pincode'] ?>
+                                </p>
+                                <p>Mobile Number: <span><?= $addr['number'] ?></span></p>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    <?php } ?>
-                  </div>
-
-                  <div class="col-12 col-lg-7">
-                    <h4 class="text-center mb-5">Select Courier Option</h4>
-                    <div class="couriercharge">
-                      <?php foreach ($courier_type as $type) { ?>
-                        <div class="acc_panel">
-                          <input class="form-check-input courier-type" type="radio" name="courier_option"
-                            id="<?php echo $type['courier_id'] ?>" value="<?php echo $type['courier_id'] ?>">
-                          <div class="d-text">
-                            <label class="form-check-label" for="st_courier"><?php echo $type['courier_name'] ?></label>
+                          <div class="col-12 col-lg-3 text-end mt-2 mt-lg-0">
+                            <a class="btn btn-sm w-100 change-address" data-id="<?= $addr['add_id'] ?>"
+                              data-index="<?= $i ?>">Change</a>
                           </div>
                         </div>
                       <?php } ?>
+                    </div>
 
-                      <div class="acc_panel">
-                        <input class="form-check-input courier-type" type="radio" name="courier_option"
-                          id="courier-option" value="0">
-                        <div class="d-text">
-                          <label class="form-check-label" for="free">Standard Amount</label>
+                    <div class="col-12 col-lg-7 mx-auto">
+                      <h4 class="text-center mb-4">Select Courier Option</h4>
+                      <div class="couriercharge">
+                        <?php foreach ($courier_type as $type) { ?>
+                          <div class="acc_panel mb-2">
+                            <input class="form-check-input courier-type" type="radio" name="courier_option"
+                              id="<?= $type['courier_id'] ?>" value="<?= $type['courier_id'] ?>" />
+                            <label class="form-check-label ms-2" for="<?= $type['courier_id'] ?>">
+                              <?= $type['courier_name'] ?>
+                            </label>
+                          </div>
+                        <?php } ?>
+                        <div class="acc_panel mb-2">
+                          <input class="form-check-input courier-type" type="radio" name="courier_option"
+                            id="courier-option" value="0" />
+                          <label class="form-check-label ms-2" for="courier-option">Standard Amount</label>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <input type="hidden" id="cart-state-id" value="<?php echo $defaultState[0]['state_id'] ?>" />
 
+                    <div class="action_btn text-center mt-4">
+                      <button type="button" class="btn btn-primary me-2 prev-step">Previous</button>
+                      <button type="button" class="btn btn-success next-step" district_id=""
+                        id="prod-detail">Next</button>
+                    </div>
+                  <?php } ?>
+                </div>
 
-                  <div class="action_btn">
-                    <button type="button" class="btn-primary prev-step">Previous</button>
-                    <a type="button" class="btn-primary  next-step" district_id="" id="prod-detail">Next</a>
-                  </div>
-                <?php } ?>
               </div>
             </div>
           </div>
-        </div>
-        <div class="step step-3 row justify-content-center">
-          <p class="billing_text">Your Orders</p>
-          <div class="step_3_wrapper col-lg-9 mb-5">
-            <div class="yourCart_div">
-              <div class="cart_img_content">
-                <!-- start -->
-                <?php for ($i = 0; $i < count($cart_product); $i++) {
-                  ?>
-                  <div class="food_img_price_des">
-                    <div class="cart_food_img">
-                      <img src="<?php echo base_url() ?><?php echo $cart_product[$i]->config_image1 ?>">
+          <div class="step step-3 row justify-content-center">
+            <p class="billing_text">Your Orders</p>
+            <div class="step_3_wrapper col-lg-9 mb-5">
+              <div class="yourCart_div">
+                <div class="cart_img_content">
+                  <!-- start -->
+                  <?php for ($i = 0; $i < count($cart_product); $i++) {
+                    ?>
+                    <div class="food_img_price_des">
+                      <div class="cart_food_img">
+                        <img src="<?php echo base_url() ?><?php echo $cart_product[$i]->config_image1 ?>">
+                      </div>
+                      <div class="food_dec_flex">
+                        <p><?php echo $cart_product[$i]->product_name ?></p>
+
+
+                        <p class="disp_<?php echo $cart_product[$i]->cart_id ?>">
+                          ₹<?php echo number_format($cart_product[$i]->sub_total) ?>
+                        </p>
+                      </div>
                     </div>
-                    <div class="food_dec_flex">
-                      <p><?php echo $cart_product[$i]->product_name ?></p>
+                    <div> <?php
+                    $sizeVal = $cart_product[$i]->size;
 
+                    if ($sizeVal != '0') { ?>
 
-                      <p class="disp_<?php echo $cart_product[$i]->cart_id ?>">
-                        ₹<?php echo number_format($cart_product[$i]->sub_total) ?>
-                      </p>
+                        <p> Size :<?php echo $cart_product[$i]->size ?></p>
+
+                      <?php } ?>
                     </div>
-                  </div>
-                  <div> <?php
-                  $sizeVal = $cart_product[$i]->size;
 
-                  if ($sizeVal != '0') { ?>
-
-                      <p> Size :<?php echo $cart_product[$i]->size ?></p>
-
-                    <?php } ?>
-                  </div>
-
-                <?php } ?>
-                <!-- end -->
+                  <?php } ?>
+                  <!-- end -->
+                </div>
               </div>
-            </div>
 
-            <div class="cart_total">
-              <div class="price_total">
-                <p>Total</p>
-                <p id="step3-totalamt" class="total_amt_cal"></p>
-              </div>
-              <div class="price_total">
+              <div class="cart_total">
+                <div class="price_total">
+                  <p>Total</p>
+                  <p id="step3-totalamt" class="total_amt_cal"></p>
+                </div>
+                <!-- <div class="price_total">
+
                 <p>Shipping</p>
                 <p>free</p>
-              </div>
-              <!-- <div class="price_total">
+              </div> -->
+                <!-- <div class="price_total">
                 <p>Discount</p>
                 <p>0</p>
               </div> -->
-              <div class="price_total">
-                <p>Courier Charges</p>
-                <p id="courier-charge"></p>
+                <div class="price_total">
+                  <p>Courier Charges</p>
+                  <p id="courier-charge"></p>
+                </div>
+              </div>
+              <input type="hidden" id="final_total" name="final_total">
+              <button type="button" class="total_btn_cart">
+                <span>Total Payable</span>
+                <span id="step3-totalamt" class="total_amt_cal overAllTotalValue"></span>
+              </button>
+
+              <div class="confirm_order">
+                <button type="button" class="continue_shoppingBtn pay_btn prev-step me-4"><i
+                    class="arrow_left me-2"></i>Go
+                  Orders</button>
+                <!-- <a type="submit" class="total_btn_cart text_center_button place_order btn-success" id="buy-now">Buy
+                Now</a> -->
+                <a type="submit" class="total_btn_cart text_center_button place_order btn-success" id="buy-now">Buy
+                  Now</a>
+              </div>
+              <div class="place_order_wrapper">
               </div>
             </div>
-            <input type="hidden" id="final_total" name="final_total">
-            <button type="button" class="total_btn_cart">
-              <span>Total</span>
-              <span id="step3-totalamt" class="total_amt_cal overAllTotalValue"></span>
-            </button>
+          </div>
+      </form>
+    </div>
 
-            <div class="confirm_order">
-              <button type="button" class="continue_shoppingBtn pay_btn prev-step me-4"><i
-                  class="arrow_left me-2"></i>Go
-                Orders</button>
-              <!-- <a type="submit" class="total_btn_cart text_center_button place_order btn-success" id="buy-now">Buy
-                Now</a> -->
-              <a type="submit" class="total_btn_cart text_center_button place_order btn-success" id="buy-now">Buy
-                Now</a>
+
+    <div class="add_address_wrapper">
+      <div class="modal fade" id="edit_address" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+              <h5 class="modal-title p-0">Edit Address
+              </h5>
+              <a id="address-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </a>
             </div>
-            <div class="place_order_wrapper">
-            </div>
+            <form id="address_formdata">
+              <div class="container">
+                <div class="row mx-0 justify-content-center">
+                  <div class="col-md-7 col-lg-5 px-lg-2 col-xl-12 px-xl-0 px-xxl-3">
+
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">State</span>
+                      <div class="custom-select form-label">
+
+                        <select id="state_id_val" name="state_id">
+                          <option value="">Select State</option>
+                          <?php for ($i = 0; $i < count($state); $i++) { ?>
+
+                            <option value="<?php echo $state[$i]['state_id'] ?>">
+                              <?php echo $state[$i]['state_title'] ?>
+                            </option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                    </label>
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">District</span>
+                      <div class="custom-select form-label">
+                        <select id="dist_id_val" name="dist_id">
+                          <!-- code -->
+                        </select>
+                      </div>
+                    </label>
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">Land
+                        Mark</span>
+                      <input name="landmark" id="landmark_val" type="text" class="form-control" placeholder="" />
+                    </label>
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">Town /
+                        City</span>
+                      <input name="city" id="city_val" type="text" class="form-control" placeholder="" />
+                    </label>
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">Address</span>
+                      <textarea name="address" id="address_val" class="form-control" rows="2"
+                        placeholder="Address"></textarea>
+                    </label>
+                    <label class="d-block mb-4">
+                      <span class="form-label d-block">Zip/Postal
+                        code</span>
+                      <input name="pincode" id="pincode_val" type="text" class="form-control" placeholder="" />
+                    </label>
+                    <div class="form-check ms-2 mb-4">
+                      <input class="form-check-input" type="checkbox" id="default_addr_val" name="default_addr"
+                        style="width: 1.25rem; height: 1.25rem;">
+                      <label class="form-check-label" for="default_addr">Set as default address</label>
+                    </div>
+
+                    <div class="mb-3 save_cancel_btn">
+                      <a class="btn me-2  px-3 rounded-3 save_btn" id="save_address">Save</a>
+                      <a type="submit" class="btn cancel_btn_add" data-dismiss="modal" aria-label="Close"
+                        id="btn-cancel">Cancel</a>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
-      </form>
+      </div>
     </div>
 
 
@@ -830,7 +917,6 @@ require("components/head.php");
 
           success: function (data) {
             let R = $.parseJSON(data);
-
             if (R.code == 200) {
               $(".address-radio").not(this).prop("checked", false);
               $("#" + add_id).prop("checked", true);
@@ -863,6 +949,10 @@ require("components/head.php");
         updateProgressBar();
       }
     }</script>
+
+  <script>
+
+  </script>
 </body>
 
 </html>

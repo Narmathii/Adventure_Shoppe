@@ -284,14 +284,18 @@ $(document).ready(function () {
     let courier = $("#courier-charge").text();
     let courierCharge = courier.replace("₹", "");
 
-
-    let State = $("#cart-state-id").val();
+    let State = $("#buynow-state-id").val();
     let CourierType = $('input[name="courier_option"]:checked').val();
 
     $.ajax({
       type: "POST",
       url: base_Url + "buynow-checkout",
-      data: { totalamt: Amtt, courierCharge: courierCharge,stateid :  State,courier_type :CourierType },
+      data: {
+        totalamt: Amtt,
+        courierCharge: courierCharge,
+        stateid: State,
+        courier_type: CourierType,
+      },
       dataType: "json",
       success: function (data) {
         if (data.code == 200) {
@@ -300,7 +304,7 @@ $(document).ready(function () {
           $.toast({
             icon: "error",
             heading: "Warning",
-            text: data.msg,
+            text: data.message,
             position: "bottom-left",
             bgColor: "#red",
             loader: true,

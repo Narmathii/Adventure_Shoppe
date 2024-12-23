@@ -162,7 +162,7 @@ class CourierController extends BaseController
     {
         $db = \Config\Database::connect();
         $query = "SELECT DISTINCT
-                a.state_title,
+                a.state_title,a.state_id,
                 CASE
                     WHEN c.dist_id = 0 THEN 'All District'
                     ELSE b.dist_name

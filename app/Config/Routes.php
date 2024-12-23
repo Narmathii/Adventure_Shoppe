@@ -89,6 +89,9 @@ $routes->get('verify-signup-otp', 'LoginControllerr::verifyOTP');
 $routes->get('cart-list', 'CartController::cartList');
 $routes->post('update-cart', 'CartController::updateCart');
 $routes->get('logout-view', 'LoginControllerr::Logout');
+$routes->post('change-address', 'CartController::changeAddress');
+$routes->post('update-cart-address', 'CartController::updateCartAddress');
+
 
 $routes->post('user-cart-details', 'CartController::userCart');
 $routes->post('delete-cart', 'CartController::deleteCart');

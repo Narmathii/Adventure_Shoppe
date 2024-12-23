@@ -60,7 +60,7 @@ $(document).ready(function () {
       resultData("Please enter valid email!");
     } else if ($("#number").val() == "") {
       resultData("Please Enter number!");
-    } else if (!isPhoneNumber($("#wanumber").val())) {
+    } else if (!isPhoneNumber($("#number").val())) {
       resultData("Please enter valid number!");
     } else {
       updateData();

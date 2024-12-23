@@ -1,12 +1,12 @@
 $(document).ready(function () {
   var mode, JSON, res_DATA, brand_master_id;
 
-  $.when(getbrandDetails()).done(function () {
-    dispbrandDetails(JSON);
+  $.when(getWishlist()).done(function () {
+    dispWishlist(JSON);
   });
 
   function refreshDetails() {
-    $.when(getbrandDetails()).done(function (brandDetails) {
+    $.when(getWishlist()).done(function (brandDetails) {
       var table = $("#datatable").DataTable();
       table.clear();
       table.rows.add(brandDetails);
@@ -101,7 +101,7 @@ $(document).ready(function () {
     }
   }
   // *************************** [get Data] *************************************************************************
-  function getbrandDetails() {
+  function getWishlist() {
     $.ajax({
       type: "POST",
       url: base_Url + "get-wishlist-data",
@@ -109,7 +109,7 @@ $(document).ready(function () {
       success: function (data) {
         res_DATA = data;
         console.log(res_DATA);
-        dispbrandDetails(res_DATA);
+        dispWishlist(res_DATA);
       },
       error: function () {
         console.log("Error");
@@ -118,7 +118,7 @@ $(document).ready(function () {
   }
   // *************************** [Display Data] *************************************************************************
 
-  function dispbrandDetails(JSON) {
+  function dispWishlist(JSON) {
     var i = 1;
     $("#datatable").DataTable({
       destroy: true,
@@ -152,6 +152,12 @@ $(document).ready(function () {
 
         {
           mDataProp: "wishlist_count",
+        },
+        {
+          mDataProp: "username",
+        },
+        {
+          mDataProp: "email",
         },
       ],
     });

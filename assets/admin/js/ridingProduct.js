@@ -60,7 +60,6 @@ $(document).ready(function () {
           var res = $.parseJSON(data);
 
           var rsubMenu = "";
-
           for (let i = 0; i < res.length; i++) {
             rsubMenu += `
             <option value="${res[i]["r_sub_id"]}">${res[i]["r_sub_menu"]}</option>`;

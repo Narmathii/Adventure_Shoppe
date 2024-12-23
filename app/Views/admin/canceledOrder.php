@@ -111,7 +111,7 @@
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
-                                           
+
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">
@@ -155,19 +155,40 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-xl-12">
+                                <div class="col-xl-12 d-flex">
                                     <div class="card custom-card">
                                         <div class="card-header d-flex justify-content-between">
                                             <div class="card-title">
                                                 Order Items
                                             </div>
-                                            <input type="hidden" id="cancel-payid">
-                                            <input type="hidden" id="cancel-orderid">
-                                            <div id="refund-button" class="d-none">
-                                            </div>
-                                            <div id="refund-status" class="d-none">
-                                            </div>
                                         </div>
+
+
+                                        <input type="hidden" id="cancel-payid">
+                                        <input type="hidden" id="cancel-orderid">
+
+                                        <div class="d-flex justify-content-between align-items-center refund_menu d-none">
+                                            <div class="col-lg-6">
+                                                <select class="form-control" name="amount_type" id="amount_type">
+                                                    <option value="">Select Refund Amount</option>
+                                                    <option value="1">
+                                                        With Courier charge
+                                                    </option>
+                                                    <option value="0">
+                                                        Without Courier charge
+                                                    </option>
+                                                </select>
+
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div id="refund-button" class="d-none">
+                                                </div>
+                                                <div id="refund-status" class="d-none">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
                                         <div class="card-body p-0">
                                             <div class="table-responsive">
                                                 <table class="table text-nowrap" id="order-details">

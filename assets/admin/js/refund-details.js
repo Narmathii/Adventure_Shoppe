@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var mode, JSON, res_DATA, order_id, dispStatus, PrintID;
+  var mode, JSON, res_DATA, order_id, dispStatus, PrintID, OrderID;
   var orderID = "";
 
   $.when(getOrderList()).done(function () {
@@ -67,57 +67,17 @@ $(document).ready(function () {
           },
         },
         {
-          mDataProp: function (data, type, full, meta) {
-            var status = data.payment_status;
-
-            var backgroundclr;
-            if (status == "PENDING") {
-              backgroundclr = "badge bg-warning";
-            } else if (status == "COMPLETED") {
-              backgroundclr = "badge bg-success";
-            } else if (status == "FAILED") {
-              backgroundclr = "badge bg-danger";
-            } else if (status == "CANCELLED") {
-              backgroundclr = "badge bg-danger";
-            } else if (status == "REFUNDED") {
-              backgroundclr = "badge bg-info";
-            }
-            return (
-              '<a id="' +
-              meta.row +
-              '" class="btn" merchant-id="' +
-              data.transaction_id +
-              '" tnx-id="' +
-              data.txnid +
-              '" salt="' +
-              data.salt +
-              '"><span class="badge ' +
-              backgroundclr +
-              '">' +
-              status +
-              "</span></a>"
-            );
-          },
+          mDataProp: "refund_id",
         },
         {
-          mDataProp: "delivery_date",
+          mDataProp: "refund_amt",
         },
         {
           mDataProp: function (data, type, full, meta) {
             var status = data.delivery_status;
 
             var backgroundclr;
-            if (status == "New") {
-              backgroundclr = "badge bg-info";
-            } else if (status == "Pending") {
-              backgroundclr = "badge bg-warning";
-            } else if (status == "Shipped") {
-              backgroundclr = "badge bg-secondary-gradient";
-            } else if (status == "Delivered") {
-              backgroundclr = "badge bg-success";
-            } else if (status == "Cancelled") {
-              backgroundclr = "badge bg-danger";
-            } else if (status == "Refund Created") {
+            if (status == "Refund Created") {
               backgroundclr = "badge bg-warning";
             } else if (status == "Refund Processed") {
               backgroundclr = "badge bg-success";
@@ -127,7 +87,7 @@ $(document).ready(function () {
             return (
               '<a id="' +
               meta.row +
-              '" class="btn BtnOrdersts" merchant-id="' +
+              '" class="btn BtnOrdersts-" merchant-id="' +
               data.transaction_id +
               '" tnx-id="' +
               data.txnid +
@@ -296,8 +256,17 @@ $(document).ready(function () {
       url: base_Url + "get-order-details",
       success: function (data) {
         let viewOrder = $.parseJSON(data);
-        console.log(viewOrder[0]["address"]);
         let sizee = viewOrder.length;
+
+        OrderID = viewOrder[0]["order_id"];
+
+        $checkSts = ` <a type="button" id="check-refund-sts" class="btn btn-warning my-1- me-2">
+                                                    Check Refund Status </a>`;
+        $deliveySts = viewOrder[0]["delivery_status"];
+        if ($deliveySts == "Refund Created") {
+          $("#refund-status").removeClass("d-none");
+          $("#refund-status").html($checkSts);
+        }
 
         // Address
         $("#user-name").html(viewOrder[0]["username"]);
@@ -422,6 +391,37 @@ $(document).ready(function () {
       },
       error: function () {
         console.log("Error");
+      },
+    });
+  });
+
+  // *************************** [Check refund status ] *************************************************************************
+
+  $(document).on("click", "#check-refund-sts", function () {
+    let order_id = OrderID;
+
+    $.ajax({
+      type: "POST",
+      url: base_Url + "check-refundstatus",
+      data: { order_id: order_id },
+      dataType: "json",
+      success: function (data) {
+        if (data.code == 200) {
+          Swal.fire({
+            title: "Congratulations!",
+            text: data.message,
+            icon: "success",
+          });
+          $("#tracking-order").modal("hide");
+          location.reload();
+        } else {
+          Swal.fire({
+            title: "Failure!",
+            text: data.message,
+            icon: "danger",
+          });
+          $("#tracking-order").modal("hide");
+        }
       },
     });
   });

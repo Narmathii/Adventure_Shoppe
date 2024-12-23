@@ -3,29 +3,55 @@
 $(document).ready(function () {
   var mode;
 
-  $("#state_id").change(function () {
-    let state_id = $(this).val();
-    $.ajax({
-      type: "POST",
-      url: base_Url + "getdist-data",
-      data: { state_id: state_id },
-      // headers: {
-      //   "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-      // },
-      dataType: "json",
+  var states = "";
 
-      success: function (res) {
-        console.log(res["response"].length);
-        // changeCSRF(res["csrf"]);
-        var distDta = "";
-        for ($i = 0; $i < res["response"].length; $i++) {
-          distDta += `<option value="${res["response"][$i]["dist_id"]}">${res["response"][$i]["dist_name"]}</option>`;
-        }
-        $("#dist_id").html(
-          `<option value=''> Select District </option>` + distDta
-        );
-      },
-    });
+  $("#state_id_val").change(function () {
+    let state_id = $(this).val();
+
+    if (mode == "new") {
+      $.ajax({
+        type: "POST",
+        url: base_Url + "getdist-data",
+        data: { state_id: state_id },
+        dataType: "json",
+
+        success: function (res) {
+          var distDta = "";
+          for ($i = 0; $i < res["response"].length; $i++) {
+            distDta += `<option value="${res["response"][$i]["dist_id"]}">${res["response"][$i]["dist_name"]}</option>`;
+          }
+
+          $("#dist_id_val").html(
+            `<option value=''> Select District </option>` + distDta
+          );
+        },
+      });
+    } else if (mode == "edit") {
+      $.ajax({
+        type: "POST",
+        url: base_Url + "getdist-data",
+        data: { state_id: state_id },
+        dataType: "json",
+
+        success: function (data) {
+          states += `<option value="${stateID}" selected>${state_name}</option>`;
+          $("#state_id_val").val(states);
+
+          var distDta = "";
+          distDta += `<option value="${distID}" selected>${distName}</option>`;
+
+          for (let i = 0; i < data.length; i++) {
+            if (data[i]["dist_id"] !== distID) {
+              distDta += `<option value="${data[i]["dist_id"]}">${data[i]["dist_name"]}</option>`;
+            }
+          }
+
+          $("#state_id_val").val(stateID);
+
+          $("#dist_id_val").html(distDta);
+        },
+      });
+    }
   });
   //  ************************************** INSERT ADDRESS **********
   mode = "new";
@@ -322,20 +348,18 @@ $(document).ready(function () {
     totalAmount();
     $(".btn-increment").click(function () {
       var cartID = $(this).attr("cart_id_data");
-      var totalStock = parseInt($(this).attr("data-stock")); 
-    
+      var totalStock = parseInt($(this).attr("data-stock"));
+
       var inputField = this.parentNode.querySelector("input[type=number]");
-      var currentQty = parseInt($(inputField).val()); 
-    
-      
+      var currentQty = parseInt($(inputField).val());
+
       if (currentQty < totalStock) {
-        inputField.stepUp(); 
-        var incQty = parseInt($(`.quantity_${cartID}`).val()); 
-    
-        subTotal(incQty, cartID); 
-      } 
+        inputField.stepUp();
+        var incQty = parseInt($(`.quantity_${cartID}`).val());
+
+        subTotal(incQty, cartID);
+      }
     });
-    
 
     $(".btn-decrement").click(function () {
       var cartID = $(this).attr("cart_id_data");
@@ -488,7 +512,12 @@ $(document).ready(function () {
     $.ajax({
       type: "POST",
       url: base_Url + "cart-checkout",
-      data: { totalamt: Amtt, courierCharge: courierCharge ,stateid :  State,courier_type :CourierType},
+      data: {
+        totalamt: Amtt,
+        courierCharge: courierCharge,
+        stateid: State,
+        courier_type: CourierType,
+      },
       dataType: "json",
       success: function (data) {
         if (data.code == 200) {
@@ -497,7 +526,7 @@ $(document).ready(function () {
           $.toast({
             icon: "error",
             heading: "Warning",
-            text: data.msg,
+            text: data.message,
             position: "bottom-left",
             bgColor: "#red",
             loader: true,
@@ -560,4 +589,175 @@ $(document).ready(function () {
       }
     }
   });
+
+  // ************************************************** Change Address *************************************************************************
+
+  $("#address-close").click(function () {
+    $("#edit_address").modal("hide");
+  });
+  $("#btn-cancel").click(function () {
+    $("#edit_address").modal("hide");
+  });
+
+  var distID;
+  var distName;
+  var stateID;
+  var state_name;
+
+  $(".change-address").click(function () {
+    $("#state_id_val").val("").trigger("change");
+    $("#dist_id_val").html('<option value="">Select District</option>');
+    $("#landmark_val").val("");
+    $("#city_val").val("");
+    $("#address_val").val("");
+    $("#pincode_val").val("");
+    $("#default_addr_val").prop("checked", false);
+
+    let addID = $(this).data("id");
+
+    $("#save_address").attr("data-addid", addID);
+
+    let index = 0;
+
+    mode = "edit";
+
+    $.ajax({
+      type: "POST",
+      url: base_Url + "change-address",
+      data: { add_id: addID },
+      cache: false,
+      success: function (data) {
+        var res_DATA = JSON.parse(data);
+
+        stateID = res_DATA[index]["state_id"];
+
+        state_name = res_DATA[index]["state_title"];
+        distID = res_DATA[index]["dist_id"];
+        distName = res_DATA[index]["dist_name"];
+        $("#state_id_val").val(stateID).trigger("change");
+
+        $("#landmark_val").val(res_DATA[index]["landmark"]);
+        $("#city_val").val(res_DATA[index]["city"]);
+        $("#address_val").val(res_DATA[index]["address"]);
+        $("#pincode_val").val(res_DATA[index]["pincode"]);
+
+        let defaultAddr = res_DATA[index]["default_addr"];
+        if (defaultAddr == 1) {
+          $("#default_addr_val").prop("checked", true);
+        } else {
+          $("#default_addr_val").prop("checked", false);
+        }
+      },
+    });
+
+    $("#edit_address").modal("show");
+  });
+
+  // ************************************************** Save  Address *************************************************************************
+
+  function validateError(data) {
+    $.toast({
+      icon: "error",
+      heading: "Warning",
+      text: data,
+      position: "bottom-left",
+      bgColor: "#red",
+      loader: true,
+      hideAfter: 2000,
+      stack: false,
+      showHideTransition: "fade",
+    });
+  }
+
+  $("#save_address").click(function () {
+
+    $addID  = $(this).data("addid");
+
+    if ($("#state_id_val").val() === "") {
+      validateError("Please Select State!");
+    } else if ($("#dist_id_val").val() === "") {
+      validateError("Please Select District!");
+    } else if ($("#landmark_val").val() === "") {
+      validateError("Please Enter Landmark");
+    } else if ($("#city_val").val() === "") {
+      validateError("Please Enter City");
+    } else if ($("#address_val").val() === "") {
+      validateError("Please Enter Address");
+    } else if ($("#pincode_val").val() === "") {
+      validateError("Please Enter Pincode");
+    } else {
+      updateAddress($addID);
+    }
+
+  });
+
+  function updateAddress($addID) {
+    var state_id = $("#state_id_val").val();
+    var dist_id = $("#dist_id_val").val();
+    var landmark = $("#landmark_val").val();
+    var city = $("#city_val").val();
+    var address = $("#address_val").val();
+    var pincode = $("#pincode_val").val();
+    var isChecked = $("#default_addr_val").prop("checked");
+    var add_id = $addID;
+    
+
+    $.ajax({
+      type: "POST",
+      url: base_Url + "update-cart-address",
+      data: {
+        state_id: state_id,
+        dist_id: dist_id,
+        landmark: landmark,
+        city: city,
+        address: address,
+        pincode: pincode,
+        default_addr: isChecked,
+        add_id:add_id
+      },
+      dataType: "json",
+      cache: false,
+      // headers: {
+      //   "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+      // },
+      success: function (resultData) {
+        // var resultData = $.parseJSON(data);
+
+        if (resultData.code == 200) {
+          // changeCSRF(resultData.csrf);
+          // update_csrf_fields(resultData.csrf_test_name);
+          $.toast({
+            icon: "success",
+            heading: "Success",
+            text: resultData.msg,
+            position: "top-right",
+            bgColor: "#28292d",
+            loader: true,
+            hideAfter: 1000,
+            stack: false,
+            showHideTransition: "fade",
+          });
+          location.reload();
+        } else {
+          // changeCSRF(resultData.csrf);
+          $.toast({
+            icon: "warning",
+            heading: "warning",
+            text: resultData.msg,
+            position: "top-right",
+            bgColor: "#28292d",
+            loader: true,
+            hideAfter: 1000,
+            stack: false,
+            showHideTransition: "fade",
+          });
+          $("#add_form").modal("hide");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("test3");
+        console.error(xhr, status, error);
+      },
+    });
+  }
 });

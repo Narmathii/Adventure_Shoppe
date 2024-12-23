@@ -136,7 +136,7 @@
                                     <div class="d-flex align-items-center w-100">
                                         <div class="">
                                             <div class="fs-15 fw-semibold">Address</div>
-                                           
+
                                             <p class="addr-text mt-3" id="address">
                                             </p>
                                             <p class="addr-text" id="city">

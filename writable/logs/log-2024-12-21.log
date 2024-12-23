@@ -1,0 +1,21 @@
+CRITICAL - 2024-12-21 16:14:04 --> ErrorException: A non-numeric value encountered
+in APPPATH\Controllers\admin\OrderListController.php on line 468.
+ 1 APPPATH\Controllers\admin\OrderListController.php(468): CodeIgniter\Debug\Exceptions->errorHandler(2, 'A non-numeric value encountered', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\OrderListController.php', 468, [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\OrderListController->processRefund()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\OrderListController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-21 16:14:04 --> ErrorException: A non-numeric value encountered
+in APPPATH\Controllers\admin\OrderListController.php on line 468.
+ 1 APPPATH\Controllers\admin\OrderListController.php(468): CodeIgniter\Debug\Exceptions->errorHandler(2, 'A non-numeric value encountered', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\OrderListController.php', 468, [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\OrderListController->processRefund()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\OrderListController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()
+CRITICAL - 2024-12-21 16:14:25 --> ErrorException: A non-numeric value encountered
+in APPPATH\Controllers\admin\OrderListController.php on line 468.
+ 1 APPPATH\Controllers\admin\OrderListController.php(468): CodeIgniter\Debug\Exceptions->errorHandler(2, 'A non-numeric value encountered', 'C:\\xampp\\htdocs\\ci4projects\\adventure_final\\app\\Controllers\\admin\\OrderListController.php', 468, [...])
+ 2 SYSTEMPATH\CodeIgniter.php(941): App\Controllers\admin\OrderListController->processRefund()
+ 3 SYSTEMPATH\CodeIgniter.php(502): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\admin\OrderListController))
+ 4 SYSTEMPATH\CodeIgniter.php(361): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 FCPATH\index.php(79): CodeIgniter\CodeIgniter->run()

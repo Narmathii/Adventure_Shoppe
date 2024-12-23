@@ -131,6 +131,10 @@
   .view-chart {
     justify-content: start;
   }
+
+  .content p {
+    font-size: 14px !important;
+  }
 }
 
 /* share option */
